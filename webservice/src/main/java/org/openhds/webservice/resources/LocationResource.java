@@ -97,6 +97,21 @@ public class LocationResource {
         return new ResponseEntity<Location>(ShallowCopier.shallowCopyLocation(location), HttpStatus.OK);
     }
 
+	@RequestMapping(value = "/locationLevel/{locationLevel}", method = RequestMethod.GET)
+	@ResponseBody
+	public Locations getLocationsForLocationLevel(@PathVariable String locationLevel) {
+		List<Location> locations = locationHierarchyService.getLocationsForLocationLevel(locationLevel);
+        List<Location> copies = new ArrayList<Location>(locations.size());
+
+        for (Location loc : locations) {
+            Location copy = ShallowCopier.shallowCopyLocation(loc);
+            copies.add(copy);
+        }
+
+        Locations allLocations = new Location.Locations();
+        allLocations.setLocations(copies);
+        return allLocations;
+	}
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/xml")
     @ResponseBody

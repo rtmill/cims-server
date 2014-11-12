@@ -44,3 +44,10 @@ body {
   padding: 0;
 }
 
+.btn-custom {
+    width: 200px;
+}
+
+.hierarchyItem {
+	box-shadow: 0px 0px 1px black;
+}

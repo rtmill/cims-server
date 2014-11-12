@@ -4,15 +4,33 @@
 // Declare app level module which depends on filters, and services
 angular.module('tabletuing', [
   'ngRoute',
+  //'cgBusy',
   'tabletuing.filters',
   'tabletuing.services',
   'tabletuing.directives',
   'tabletuing.controllers'
-]).
+  ]).
+
 config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/form/location', {templateUrl: 'partials/form/location.html', controller: 'locationCtrl'});
-  $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'});
-  $routeProvider.when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'});
-  $routeProvider.when('/home', {templateUrl: 'partials/home.html', controller: 'HomeCtrl'});
-  $routeProvider.otherwise({redirectTo: '/home'});
+  $routeProvider
+  .when('/form/location', {
+  		templateUrl: 'partials/form/location.html', 
+  		controller: 'LocationCtrl'
+  	})
+  .when('/form/individual', {
+  		templateUrl: 'partials/form/individual.html', 
+  		controller: 'IndividualCtrl'
+  	})
+  .when('/form/household', {
+  		templateUrl: 'partials/form/household.html', 
+  		controller: 'HouseholdCtrl'
+  	})
+  .when('/form/marriage', {
+  		templateUrl: 'partials/form/marriage.html', 
+  		controller: 'MarriageCtrl'
+  	})
+  .when('/home', {templateUrl: 'partials/home.html'})
+  .otherwise({redirectTo: '/home'});
 }]);
+
+

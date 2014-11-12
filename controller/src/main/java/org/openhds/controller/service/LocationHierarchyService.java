@@ -100,5 +100,7 @@ public interface LocationHierarchyService {
 
 	@Authorized({PrivilegeConstants.EDIT_ENTITY})
 	void updateLocation(Location location) throws ConstraintViolations;
-}
+
+	@Authorized({PrivilegeConstants.VIEW_ENTITY}) 
+	List<Location> getLocationsForLocationLevel(String locationHierarchyId);}
 
