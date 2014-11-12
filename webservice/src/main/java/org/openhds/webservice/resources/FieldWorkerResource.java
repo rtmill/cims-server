@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/fieldworkers")
 public class FieldWorkerResource {
-
+	
     private FieldWorkerService fieldWorkerService;
 
     @Autowired
@@ -53,7 +53,7 @@ public class FieldWorkerResource {
     	List<FieldWorker> copies = getAllFieldWorkerCopies();
         
         WebserviceResult result = new WebserviceResult();
-        result.addDataElement("fieldWorkers", copies);
+        result.addDataElement("fieldworkers", copies);
         result.setResultCode(ResultCodes.SUCCESS_CODE);
         result.setStatus(ResultCodes.SUCCESS);
         result.setResultMessage(copies.size() + " field workers were found.");

@@ -3,7 +3,7 @@
 /* Controllers */
 
 angular.module('tabletuing.controllers', ['ui.bootstrap'])
-   .controller('MainCtrl', ['$scope', '$rootScope', '$resource', '$location', function ($scope, $rootScope, $resource, $location) {
+   .controller('MainCtrl', ['$scope', '$rootScope', '$resource', '$location', 'locationService', 'fieldWorkerService', function ($scope, $rootScope, $resource, $location, locationService, fieldWorkerService) {
 	   
 	   // full hierarchy
 	   $scope.hierarchyItems;
@@ -25,12 +25,9 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 	   // default to root
 	   $scope.parentExtId = HIERARCHY_ROOT;
 	   
-	   // TODO move to reusable service
-	   var locationResource = $resource(contextPath + '/api/rest/locations/locationLevel/:locationLevel',
-			   {locationLevel : "@locationLevel"},
-			   {
-				   getLocationsForLevel: {method: "GET"}
-			   });
+	   $scope.getAllFieldWorkers = function() {
+		   fieldWorkerService.getAllFieldWorkers();
+	   };
 	   
 	   $scope.getLevel = function(index) {
 		   var location = null;
@@ -70,7 +67,7 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 		   
 	   }
 	   $scope.selectLocation = function() {
-		   locationResource.getLocationsForLevel({locationLevel : $scope.selectedLevel.uuid})
+		   locationService.getLocationsForLevel({locationLevel : $scope.selectedLevel.uuid})
 	   			.$promise
 	   			.then(function(result) {
 	   				$rootScope.locations = result.locations;
@@ -126,17 +123,12 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 			   
 			   //console.log("Loading locations for level" + angular.toJson($scope.selectedLevel));
 			   
-			   locationResource.getLocationsForLevel({locationLevel : $scope.selectedLevel.uuid})
+			   locationService.getLocationsForLevel({locationLevel : $scope.selectedLevel.uuid})
 			   		.$promise
 			   		.then(function(result) {
 			   			$rootScope.locations = result.locations;
 			   		 });
-			   
-//			   locationResource.query({locationLevel:'hierarchy3'})
-//		   		.$promise.then(function (result) {
-//					   console.log("Locations=" + result.locations);
-//				   }
-//				 );
+
 		   }
 	   }
 	   
