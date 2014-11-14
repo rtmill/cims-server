@@ -27,6 +27,7 @@
 	<script src="resources/scripts/ng/controllers.js"></script>
 	<script src="resources/scripts/ng/filters.js"></script>
 	<script src="resources/scripts/ng/directives.js"></script>
+	<script src="resources/scripts/ng/modal.js"></script>
 	
 	<!-- angular busy resources -->
 	<!-- <script src="resources/lib/ng/angular-busy/angular-busy.js"></script>
@@ -55,71 +56,7 @@
         </div><!--/.nav-collapse -->
       </div>
     </div>
-     <div class="container" ng-controller="MainCtrl" ng-view>
-     </div><!-- /.container -->
-
-    
-<!-- 	<ul class="menu"> -->
-<!-- 		<li><a href="#/home">Home</a></li> -->
-<!-- 		<li><a href="#/form/location">Add Location</a></li> -->
-<!-- 		<!-- -->
-<!-- 		<li><a href="#/view1">view1</a></li> -->
-<!-- 		<li><a href="#/view2">view2</a></li> -->
-<!-- 		  -->
-<!-- 	</ul> -->
-
-<!-- 	<div ng-view></div> -->
-
-<!-- 	<div id="container"> -->
-<!-- 		<div id="header">Header</div> -->
-<!-- 		<div id="column-left"> -->
-<!-- 			<div> -->
-<!-- 				<input type="button" value="Select Region" /> -->
-<!-- 			</div> -->
-<!-- 			<div> -->
-<!-- 				<input type="button" value="Select Sub Region" /> -->
-<!-- 			</div> -->
-<!-- 			<div> -->
-<!-- 				<input type="button" value="Select Village" /> -->
-<!-- 			</div> -->
-<!-- 			<div> -->
-<!-- 				<input type="button" value="Select Round" /> -->
-<!-- 			</div> -->
-<!-- 			<div> -->
-<!-- 				<input type="button" value="Select Location" /> -->
-<!-- 			</div> -->
-<!-- 			<div> -->
-<!-- 				<input type="button" value="Select Individual" /> -->
-<!-- 			</div> -->
-<!-- 		</div> -->
-
-<!-- 		<div id="column-center"> -->
-<!-- 			<div> -->
-<!-- 				<ul> -->
-
-<!-- 				</ul> -->
-<!-- 			</div> -->
-<!-- 		</div> -->
-
-<!-- 		<div id="column-right"> -->
-<!-- 			<div> -->
-<!-- 				<input type="button" value="Create Location" /> -->
-<!-- 			</div> -->
-<!-- 			<div> -->
-<!-- 				<input type="button" value="Create Visit" /> -->
-<!-- 			</div> -->
-<!-- 			<div> -->
-<!-- 				<input type="button" value="Clear Location" /> -->
-<!-- 			</div> -->
-<!-- 			<div> -->
-<!-- 				<input type="button" value="Clear Visit" /> -->
-<!-- 			</div> -->
-<!-- 		</div> -->
-<!-- 		<div id="footer">Footer</div> -->
-<!-- 	</div> -->
-
-
-	
+     <div class="container" ng-controller="MainCtrl" ng-view></div>
 	
 </body>
 </html>

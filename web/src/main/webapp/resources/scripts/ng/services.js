@@ -1,20 +1,28 @@
 'use strict';
 
 angular.module('tabletuing.services', ['ngResource'])
-	.factory('fieldWorkerService', ['$resource',
-	  function($resource){
-		var fieldWorkerResource = $resource(contextPath + '/api/rest/fieldworkers',
+	.factory('fieldWorkerService', ['$resource', function($resource) {
+		return $resource(contextPath + '/api/rest/fieldworkers',
 			   {},
 			   {
 				   getAllFieldWorkers: {method: "GET"}
 			   });
-	    return fieldWorkerResource;
 	  }])
-	  .factory('locationService', ['$resource',
-	   function($resource) {
-		  return $resource(contextPath + '/api/rest/locations/locationLevel/:locationLevel',
-			   {locationLevel : "@locationLevel"},
+	  .factory('locationService', ['$resource', function($resource) {
+		  return $resource(contextPath + '/api/rest/locations/:path/:id',
+			   {},
 			   {
-				   getLocationsForLevel: {method: "GET"}
+				   getLocation: {method: "GET"},
+				   getLocationsForLevel: {method: "GET", params: {path:"locationLevel"}},
+				   saveLocation: {method: "POST"}
 			   });
+	  }])
+	  .factory('locationHierService', ['$resource', function($resource) {
+		  return $resource(contextPath + '/api/rest/locationhierarchies/:path/:id',
+			  {},
+			  {
+				  getLevels: {method: "GET", params: {path:"levels"}, isArray: true}
+			  });
 	  }]);
+
+//, id:"@locationLevel"
