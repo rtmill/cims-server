@@ -6,12 +6,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openhds.errorhandling.constants.ErrorConstants;
-import org.openhds.domain.model.ErrorLog;
-import org.openhds.errorhandling.service.ErrorHandlingService;
-import org.openhds.errorhandling.util.ErrorLogUtil;
-
-
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -19,9 +13,13 @@ import javax.xml.bind.Marshaller;
 
 import org.openhds.controller.exception.ConstraintViolations;
 import org.openhds.controller.service.LocationHierarchyService;
+import org.openhds.domain.model.ErrorLog;
 import org.openhds.domain.model.Location;
 import org.openhds.domain.model.Location.Locations;
 import org.openhds.domain.util.ShallowCopier;
+import org.openhds.errorhandling.constants.ErrorConstants;
+import org.openhds.errorhandling.service.ErrorHandlingService;
+import org.openhds.errorhandling.util.ErrorLogUtil;
 import org.openhds.task.support.FileResolver;
 import org.openhds.webservice.CacheResponseWriter;
 import org.openhds.webservice.FieldBuilder;
@@ -33,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,7 +52,6 @@ public class LocationResource {
     private final JAXBContext context;
     private final Marshaller marshaller;
 
-
     @Autowired
     public LocationResource(LocationHierarchyService locationHierarchyService, FieldBuilder fieldBuilder,
             FileResolver fileResolver, ErrorHandlingService errorService) {
@@ -68,10 +66,9 @@ public class LocationResource {
             throw new RuntimeException("Could not create JAXB context and marshaller for location resource, CRITICAL ERROR");
         }
 
-
     }
 
-    @RequestMapping(value = "/{extId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/{extId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends Serializable> getLocationByExtIdJson(@PathVariable String extId) {
         Location location = locationHierarchyService.findLocationById(extId);
         if (location == null) {
@@ -87,7 +84,7 @@ public class LocationResource {
         return new ResponseEntity<WebserviceResult>(result, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/{extId}", method = RequestMethod.GET, produces = "application/xml")
+    @RequestMapping(value = "/{extId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<? extends Serializable> getLocationByExtIdXml(@PathVariable String extId) {
         Location location = locationHierarchyService.findLocationById(extId);
         if (location == null) {
@@ -97,9 +94,9 @@ public class LocationResource {
         return new ResponseEntity<Location>(ShallowCopier.shallowCopyLocation(location), HttpStatus.OK);
     }
 
-	@RequestMapping(value = "/locationLevel/{locationLevel}", method = RequestMethod.GET)
+	@RequestMapping(value = "/locationLevel/{locationLevel}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Locations getLocationsForLocationLevel(@PathVariable String locationLevel) {
+	public ResponseEntity<? extends Serializable> getLocationsForLocationLevel(@PathVariable String locationLevel) {
 		List<Location> locations = locationHierarchyService.getLocationsForLocationLevel(locationLevel);
         List<Location> copies = new ArrayList<Location>(locations.size());
 
@@ -108,12 +105,16 @@ public class LocationResource {
             copies.add(copy);
         }
 
-        Locations allLocations = new Location.Locations();
-        allLocations.setLocations(copies);
-        return allLocations;
+        WebserviceResult result = new WebserviceResult();
+        result.addDataElement("locations", copies);
+        result.setResultCode(ResultCodes.SUCCESS_CODE);
+        result.setStatus(ResultCodes.SUCCESS);
+        result.setResultMessage(copies.size() + " location found");
+        
+        return new ResponseEntity<WebserviceResult>(result, HttpStatus.OK);
 	}
 
-    @RequestMapping(method = RequestMethod.GET, produces = "application/xml")
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     public Locations getAllLocationsXml() {
         List<Location> locations = locationHierarchyService.getAllLocations();
@@ -129,7 +130,7 @@ public class LocationResource {
         return allLocations;
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<WebserviceResult> getAllLocationsJson() {
         List<Location> locations = locationHierarchyService.getAllLocations();
@@ -149,7 +150,7 @@ public class LocationResource {
         return new ResponseEntity<WebserviceResult>(result, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/cached", method = RequestMethod.GET, produces = "application/xml")
+    @RequestMapping(value = "/cached", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public void getAllCachedLocationsXml(HttpServletResponse response) {
         try {
             CacheResponseWriter.writeResponse(fileResolver.resolveLocationXmlFile(), response);
@@ -158,7 +159,7 @@ public class LocationResource {
         }
     }
 
-    @RequestMapping(value = "/cached", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/cached", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public void getAllCachedLocationsJson(HttpServletResponse response) {
         try {
             CacheResponseWriter.writeResponse(fileResolver.resolveLocationXmlFile(), response);
@@ -167,7 +168,7 @@ public class LocationResource {
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/xml", consumes = "application/xml")
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_XML_VALUE, consumes = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<? extends Serializable> insertXml(@RequestBody Location location) throws JAXBException {
         ConstraintViolations cv = new ConstraintViolations();
         location.setCollectedBy(fieldBuilder.referenceField(location.getCollectedBy(), cv));
@@ -196,8 +197,9 @@ public class LocationResource {
         return new ResponseEntity<Location>(ShallowCopier.shallowCopyLocation(location), HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends Serializable> insertJson(@RequestBody Location location) throws JAXBException {
+    
         ConstraintViolations cv = new ConstraintViolations();
         location.setCollectedBy(fieldBuilder.referenceField(location.getCollectedBy(), cv));
         location.setLocationHierarchy(fieldBuilder.referenceField(location.getLocationHierarchy(), cv));
@@ -229,7 +231,7 @@ public class LocationResource {
         return new ResponseEntity<WebserviceResult>(result, HttpStatus.CREATED);
     }
 
-	@RequestMapping(method = RequestMethod.PUT, produces = "application/xml", consumes = "application/xml")
+	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_XML_VALUE, consumes = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<? extends Serializable> addOrUpdateXml(@RequestBody Location location) {
     	
         ConstraintViolations cv = new ConstraintViolations();
@@ -264,7 +266,7 @@ public class LocationResource {
         return new ResponseEntity<Location>(ShallowCopier.shallowCopyLocation(location), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, produces = "application/json", consumes = "application/json")
+    @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends Serializable> addOrUpdateJson(@RequestBody Location location) {
     	
         ConstraintViolations cv = new ConstraintViolations();
@@ -310,7 +312,7 @@ public class LocationResource {
         return new ResponseEntity<WebserviceResult>(result, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{extId}", method = RequestMethod.DELETE, produces = "application/xml")
+    @RequestMapping(value = "/{extId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<? extends Serializable> deleteLocationByExtIdXml(@PathVariable String extId) {
         Location location = locationHierarchyService.findLocationById(extId);
 
@@ -327,7 +329,7 @@ public class LocationResource {
         return new ResponseEntity<Location>(ShallowCopier.shallowCopyLocation(location), HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/{extId}", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "/{extId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends Serializable> deleteLocationByExtIdJson(@PathVariable String extId) {
         Location location = locationHierarchyService.findLocationById(extId);
 
