@@ -3,7 +3,8 @@
 /* Controllers */
 
 angular.module('tabletuing.controllers', ['ui.bootstrap'])
-   .controller('MainCtrl', ['$scope', '$rootScope', '$resource', '$location', 'locationService', 'locationHierService', function ($scope, $rootScope, $resource, $location, locationService, locationHierService) {
+   .controller('MainCtrl', ['$scope', '$rootScope', '$resource', '$location', 'locationService', 'locationHierService', 
+                            function ($scope, $rootScope, $resource, $location, locationService, locationHierService) {
 	   
 	   // full hierarchy
 	   $scope.hierarchyItems;
@@ -142,41 +143,21 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 	   $scope.go = function ( path ) {
 		   $location.path( path );
 	    };
-	    
-	    /*
-	   var locationHierarchyResource = $resource(contextPath + '/api/rest/locationhierarchies/:path', {}, 
-			   { 
-		   		 getLocationLevels : {method: 'GET', isArray: false}, 
-		   		 getLevels : {method: 'GET', isArray: false}
-			   }
-	   ); 
-	   var init = function () {
-		   locationHierarchyResource.getLocationLevels().$promise.then(function (result) {
-		       $scope.hierarchyItems = result.locationHierarchies;
-		   });
-		   
-		   var hierarchyLevels = locationHierarchyResource.getLevels({'path':"levels"})
-		   		.$promise.then(
-				   function (result) {
-					   $scope.hierarchyLevels = result;
-				   }
-				 );
-		   
-	   };  */
 
 	   var init = function () {
 		   locationHierService.get().$promise.then(function (result) {
-		       $scope.hierarchyItems = result.locationHierarchies;
+		       $scope.hierarchyItems = result.data.locationhierarchies;
 		   });
 		   
 		   locationHierService.getLevels().$promise.then(function (result) {
-			   $scope.hierarchyLevels = result;
+			   $scope.hierarchyLevels = result.data.locationhierarchylevels;
 		   });
 	   };  
 	   
 	   init();	   
    }])
-  .controller('LocationCtrl', ['$scope', '$rootScope', '$resource', '$location', 'locationService', 'locationHierService', 'openModal', 'RESULT_CODES', function ($scope, $rootScope, $resource, $location, locationService, locationHierService, openModal, RESULT_CODES) {  
+  .controller('LocationCtrl', ['$scope', '$rootScope', '$resource', '$location', 'locationService', 'locationHierService', 'openModal', 'RESULT_CODES', 
+                               function ($scope, $rootScope, $resource, $location, locationService, locationHierService, openModal, RESULT_CODES) {  
 	   
 	  $scope.parentLocationHierarchy = $scope.selectedLevel;
 
@@ -209,7 +190,6 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 	   }
         
        	var init = function() {
-       		console.log("***" + RESULT_CODES.SUCCESS);
        		var parentExtId = ($location.search()).parentExtId;
        		
        		// route back to home
@@ -222,7 +202,7 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
        				.$promise
        				.then(
        	        		function(result) {
-       	        			$scope.parentLocationHierarchy = result;
+       	        			$scope.parentLocationHierarchy = result.data.locationhierarchy;
        	        		},
        	        		function(error) {
        	        			title = 'Error ' + error.status;

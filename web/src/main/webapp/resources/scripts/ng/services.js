@@ -21,7 +21,7 @@ angular.module('tabletuing.services', ['ngResource'])
 		  return $resource(contextPath + '/api/rest/locationhierarchies/:path/:id',
 			  {},
 			  {
-				  getLevels: {method: "GET", params: {path:"levels"}, isArray: true}
+				  getLevels: {method: "GET", params: {path:"levels"}}
 			  });
 	  }]);
 
