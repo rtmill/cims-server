@@ -7,19 +7,25 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.openhds.controller.exception.ConstraintViolations;
 import org.openhds.controller.service.IndividualService;
 import org.openhds.domain.model.Individual;
 import org.openhds.domain.model.Individual.Individuals;
 import org.openhds.domain.util.ShallowCopier;
 import org.openhds.task.support.FileResolver;
 import org.openhds.webservice.CacheResponseWriter;
+import org.openhds.webservice.response.WebserviceResult;
+import org.openhds.webservice.response.WebserviceResultHelper;
+import org.openhds.webservice.response.constants.ResultCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -45,6 +51,40 @@ public class IndividualResource {
         }
 
         return new ResponseEntity<Individual>(ShallowCopier.shallowCopyIndividual(individual), HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/{extId}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<? extends Serializable> getIndividualByIdJson(@PathVariable String extId) {
+        Individual individual = individualService.findIndivById(extId);
+        if (individual == null) {
+            return new ResponseEntity<String>("", HttpStatus.NOT_FOUND);
+        }
+        
+        Individual copy = ShallowCopier.shallowCopyIndividual(individual);
+        
+        WebserviceResult result = new WebserviceResult();
+        result.addDataElement("individual", copy);
+        result.setResultCode(ResultCodes.SUCCESS_CODE);
+        result.setStatus(ResultCodes.SUCCESS);
+        result.setResultMessage("Individual found.");
+
+        return new ResponseEntity<WebserviceResult>(result, HttpStatus.OK);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<? extends Serializable> createIndividualJson(@RequestBody Individual individual) {
+        try {
+        	individualService.createIndividual(individual);
+        } catch (ConstraintViolations cv) {
+        	return WebserviceResultHelper.genericConstraintResponse(cv);
+        }
+
+        WebserviceResult result = new WebserviceResult();
+        result.addDataElement("individual", ShallowCopier.shallowCopyIndividual(individual));
+        result.setResultCode(ResultCodes.SUCCESS_CODE);
+        result.setStatus(ResultCodes.SUCCESS);
+        result.setResultMessage("Individual created");
+        return new ResponseEntity<WebserviceResult>(result, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET)

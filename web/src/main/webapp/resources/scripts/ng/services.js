@@ -14,7 +14,7 @@ angular.module('tabletuing.services', ['ngResource'])
 			   {
 				   getLocation: {method: "GET"},
 				   getLocationsForLevel: {method: "GET", params: {path:"locationLevel"}},
-				   saveLocation: {method: "POST"}
+				   createLocation: {method: "POST"}
 			   });
 	  }])
 	  .factory('locationHierService', ['$resource', function($resource) {
@@ -23,6 +23,11 @@ angular.module('tabletuing.services', ['ngResource'])
 			  {
 				  getLevels: {method: "GET", params: {path:"levels"}}
 			  });
+	  }])
+	  .factory('individualService', ['$resource', function($resource) {
+		  return $resource(contextPath + '/api/rest/individuals/:path/:id',
+			  {},
+			  {
+				  getIndividual: {method: "GET"}
+			  });
 	  }]);
-
-//, id:"@locationLevel"

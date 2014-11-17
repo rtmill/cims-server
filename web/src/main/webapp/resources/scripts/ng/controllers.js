@@ -164,7 +164,7 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
         $scope.createLocation = function() {
         	$scope.newLocation.locationHierarchy = $scope.parentLocationHierarchy;
         	
-        	locationService.saveLocation($scope.newLocation).$promise.then(
+        	locationService.createLocation($scope.newLocation).$promise.then(
         		function(result) {
         			$rootScope.selectedLocation = result.data.location;
         			$rootScope.locations = [];
