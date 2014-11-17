@@ -30,4 +30,12 @@ angular.module('tabletuing.services', ['ngResource'])
 			  {
 				  getIndividual: {method: "GET"}
 			  });
+	  }])
+	  .factory('socialGroupService', ['$resource', function($resource) {
+		  return $resource(contextPath + '/api/rest/socialgroups/:path/:id',
+			  {},
+			  {
+				  getSocialGroup: {method: "GET"},
+				  createSocialGroup: {method: "POST"}
+			  });
 	  }]);

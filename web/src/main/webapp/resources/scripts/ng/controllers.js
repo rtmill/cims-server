@@ -214,12 +214,12 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
         
         init();          
   }])
-  .controller('HouseholdCtrl', ['$scope', '$rootScope', '$resource', '$location', 'openModal', 'RESULT_CODES', function ($scope, $rootScope, $resource, $location, openModal, RESULT_CODES) {  
-	  var householdResource = $resource(contextPath + '/api/rest/socialgroups/:extId');  
+  .controller('HouseholdCtrl', ['$scope', '$rootScope', '$resource', '$location', 'socialGroupService', 'openModal', 'RESULT_CODES', 
+                                function ($scope, $rootScope, $resource, $location, socialGroupService, openModal, RESULT_CODES) {  
 	  $scope.createNewHousehold = function() {
-      	householdResource.save($scope.newHousehold).$promise.then(
-      		function(householdResource) {
-      			$rootScope.selectedHousehold = householdResource;
+      	socialGroupService.createSocialGroup($scope.newHousehold).$promise.then(
+      		function(result) {
+      			$rootScope.selectedHousehold = result.data.socialgroup;
       			$location.path("/home");
       		},
       		// duplicated from create location

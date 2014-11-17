@@ -16,12 +16,16 @@ import org.openhds.task.support.FileResolver;
 import org.openhds.webservice.CacheResponseWriter;
 import org.openhds.webservice.FieldBuilder;
 import org.openhds.webservice.WebServiceCallException;
+import org.openhds.webservice.response.WebserviceResult;
+import org.openhds.webservice.response.constants.ResultCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,6 +64,27 @@ public class SocialGroupResource {
 
         return sgs;
     }
+    
+    @RequestMapping(value = "/{extId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<? extends Serializable> getSocialGroupByExtIdJson(@PathVariable String extId) throws Exception {
+    	
+    	WebserviceResult result = new WebserviceResult();
+    
+    	SocialGroup socialGroup = socialGroupService.findSocialGroupById(extId, "Unable to find social group with extId=" + extId);
+        if (socialGroup == null) {
+        	result.setResultCode(ResultCodes.ENTITY_NOT_FOUND_CODE);
+        	result.setStatus(ResultCodes.FAILURE);
+        	result.setResultMessage("Unable to find social group with extId=" + extId);
+            return new ResponseEntity<WebserviceResult>(result, HttpStatus.NOT_FOUND);
+        }
+
+        result.addDataElement("socialgroup", ShallowCopier.shallowCopySocialGroup(socialGroup));
+        result.setResultCode(ResultCodes.SUCCESS_CODE);
+        result.setStatus(ResultCodes.SUCCESS);
+        result.setResultMessage("Social group was found");
+        
+        return new ResponseEntity<WebserviceResult>(result, HttpStatus.OK);
+    }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<? extends Serializable> insert(@RequestBody SocialGroup socialGroup) {
@@ -80,6 +105,32 @@ public class SocialGroupResource {
         }
 
         return new ResponseEntity<SocialGroup>(ShallowCopier.shallowCopySocialGroup(socialGroup), HttpStatus.CREATED);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<? extends Serializable> createSocialGroupJson(@RequestBody SocialGroup socialGroup) {
+        ConstraintViolations cv = new ConstraintViolations();
+
+        socialGroup.setCollectedBy(fieldBuilder.referenceField(socialGroup.getCollectedBy(), cv));
+        socialGroup.setGroupHead(fieldBuilder.referenceField(socialGroup.getGroupHead(), cv,
+                "Invalid Ext Id for Group Head"));
+
+        if (cv.hasViolations()) {
+            return new ResponseEntity<WebServiceCallException>(new WebServiceCallException(cv), HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            socialGroupService.createSocialGroup(socialGroup);
+        } catch (ConstraintViolations e) {
+            return new ResponseEntity<WebServiceCallException>(new WebServiceCallException(e), HttpStatus.BAD_REQUEST);
+        }
+
+        WebserviceResult result = new WebserviceResult();
+        result.addDataElement("socialgroup", ShallowCopier.shallowCopySocialGroup(socialGroup));
+        result.setResultCode(ResultCodes.SUCCESS_CODE);
+        result.setStatus(ResultCodes.SUCCESS);
+        result.setResultMessage("Social Group created");
+        return new ResponseEntity<WebserviceResult>(result, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/cached", method = RequestMethod.GET)
