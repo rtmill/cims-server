@@ -3,16 +3,16 @@
 		<fieldset>
 
 			<!-- Form Name -->
-			<legend>Create Head of Household/Individual</legend>
+			<legend>Create {{selectedHousehold == null ? "Head of Household" : "Member of Household"}}</legend>
 			
 			<div class="form-group">			
 				<label class="col-md-4 control-label">Location</label>
 				<div class="col-md-4 con">
-				 	<input type="text" class="form-control input-md" value="{{selectedLocation.name}}" ng-disabled="true"/>
+				 	<input type="text" class="form-control input-md" value="{{selectedLocation.locationName}}" ng-disabled="true"/>
 				</div>
 			</div>
 			
-			<div class="form-group">			
+			<div class="form-group"  ng-show="selectedHousehold != null">			
 				<label class="col-md-4 control-label">Household</label>
 				<div class="col-md-4 con">
 				 	<input type="text" class="form-control input-md" value="{{selectedHousehold.name}}" ng-disabled="true"/>

@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openhds.controller.exception.ConstraintViolations;
 import org.openhds.controller.service.IndividualService;
+import org.openhds.controller.service.SocialGroupService;
 import org.openhds.domain.model.Individual;
 import org.openhds.domain.model.Individual.Individuals;
+import org.openhds.domain.model.SocialGroup;
 import org.openhds.domain.util.ShallowCopier;
 import org.openhds.task.support.FileResolver;
 import org.openhds.webservice.CacheResponseWriter;
@@ -35,13 +37,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class IndividualResource {
     private static final Logger logger = LoggerFactory.getLogger(IndividualResource.class);
     private IndividualService individualService;
+    private SocialGroupService socialGroupService;
     private FileResolver fileResolver;
 
     @Autowired
-    public IndividualResource(IndividualService individualService, FileResolver fileResolver) {
+    public IndividualResource(IndividualService individualService, SocialGroupService socialGroupService, FileResolver fileResolver) {
         this.individualService = individualService;
+        this.socialGroupService = socialGroupService;
         this.fileResolver = fileResolver;
-    }
+    }	
 
     @RequestMapping(value = "/{extId}", method = RequestMethod.GET)
     public ResponseEntity<? extends Serializable> getIndividualById(@PathVariable String extId) {
@@ -101,6 +105,28 @@ public class IndividualResource {
         individuals.setIndividuals(copies);
 
         return individuals;
+    }
+    
+    @RequestMapping(value = "socialgroup/{socialGroupExtId}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<? extends Serializable> getIndividualsForSocialGroupJson(@PathVariable String socialGroupExtId) {
+    	SocialGroup socialGroup = socialGroupService.findSocialGroupById(socialGroupExtId);
+        
+    	List<Individual> copies = new ArrayList<Individual>();
+    	if (socialGroup != null) {
+    		List<Individual> individuals = socialGroupService.getAllIndividualsOfSocialGroup(socialGroup);
+        	if (individuals != null) {
+        		for (Individual ind : individuals) {
+        			copies.add(ShallowCopier.shallowCopyIndividual(ind));
+        		}
+        	}
+    	}
+    	
+        WebserviceResult result = new WebserviceResult();
+        result.addDataElement("individuals", copies);
+        result.setResultCode(ResultCodes.SUCCESS_CODE);
+        result.setStatus(ResultCodes.SUCCESS);
+        result.setResultMessage(copies.size() + " individuals found");
+        return new ResponseEntity<WebserviceResult>(result, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/cached", method = RequestMethod.GET)

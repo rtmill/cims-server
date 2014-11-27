@@ -21,9 +21,9 @@
 					<div>Latitude: {{selectedLocation.latitude}}</div>
 					<div>Longitude: {{selectedLocation.longitude}}</div>				
 				</div>
-				<div class="voffset2">
-					<button type="button" class="btn btn-default btn-custom" ng-disabled="disableHousehold()" ng-click="selectHousehold()">Select Household</button>
-				</div>
+<!-- 				<div class="voffset2"> -->
+<!-- 					<button type="button" class="btn btn-default btn-custom" ng-disabled="disableHousehold()" ng-click="selectHousehold()">Select Household</button> -->
+<!-- 				</div> -->
 				<div ng-show="selectedHousehold != null">
 					<div>ExtId: {{selectedHousehold.extId}}</div>
 					<div>Name: {{selectedHousehold.groupName}}</div>				
@@ -42,7 +42,7 @@
 		</div>
 		<div class="col-md-6">
 				<div ng-repeat="item in hierarchyItems | filter:byParent()">
-					<h2 ng-show="$first">{{item.level.name}}s</h2>
+					<h2 ng-show="$first">{{item.level.name}}</h2>
     				<div class="text-center hierarchyItem" ng-click="selectLevelItem(item)">
     					<h3>{{item.name}}</h3>
     					<h4>{{item.extId}}</h4>
@@ -70,12 +70,13 @@
 <!-- 			<div class="voffset2"> -->
 <!-- 				<button type="button" class="btn btn-default btn-custom" ng-disabled="true">Clear Visit</button> -->
 <!-- 			</div> -->
-			<div class="voffset2">
-				<button type="button" class="btn btn-default btn-custom" ng-show="showCreateHouseholdButton()" ng-click="createHousehold()">Create Household</button>
-			</div>
+<!-- 			<div class="voffset2"> -->
+<!-- 				<button type="button" class="btn btn-default btn-custom" ng-show="showCreateHouseholdButton()" ng-click="createHousehold()">Create Household</button> -->
+<!-- 			</div> -->
+			
 			<div class="voffset2">
 				<button type="button" class="btn btn-default btn-custom" ng-show="showCreateIndividualButton()" ng-click="createIndividual()">
-					Create {{selectedHousehold.groupHead && 'Individual' || 'Head of Household'}} 
+					Create {{selectedHousehold && 'Member of Household' || 'Head of Household'}} 
 				</button>
 			</div>
 <!-- 			<div class="voffset2"> -->

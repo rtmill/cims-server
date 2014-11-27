@@ -18,7 +18,7 @@ import org.openhds.domain.model.Membership;
 import org.openhds.domain.model.SocialGroup;
 import org.springframework.transaction.annotation.Transactional;
 
-public class SocialGroupServiceImpl implements SocialGroupService {
+public class SocialGroupServiceImpl implements SocialGroupService  {
 
     private EntityService service;
     private GenericDao genericDao;
@@ -159,7 +159,8 @@ public class SocialGroupServiceImpl implements SocialGroupService {
 
         service.save(group);
     }
-
+    
+    @Override
     public SocialGroup findSocialGroupById(String socialGroupId, String msg) throws Exception {
         SocialGroup sg = genericDao.findByProperty(SocialGroup.class, "extId", socialGroupId);
         if (sg == null) {
@@ -168,6 +169,7 @@ public class SocialGroupServiceImpl implements SocialGroupService {
         return sg;
     }
 
+    @Override
     public SocialGroup findSocialGroupById(String sgExtId) {
         SocialGroup sg = genericDao.findByProperty(SocialGroup.class, "extId", sgExtId);
         return sg;

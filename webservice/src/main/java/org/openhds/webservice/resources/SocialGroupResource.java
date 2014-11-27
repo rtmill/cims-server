@@ -70,12 +70,12 @@ public class SocialGroupResource {
     	
     	WebserviceResult result = new WebserviceResult();
     
-    	SocialGroup socialGroup = socialGroupService.findSocialGroupById(extId, "Unable to find social group with extId=" + extId);
+    	SocialGroup socialGroup = socialGroupService.findSocialGroupById(extId);
         if (socialGroup == null) {
         	result.setResultCode(ResultCodes.ENTITY_NOT_FOUND_CODE);
         	result.setStatus(ResultCodes.FAILURE);
         	result.setResultMessage("Unable to find social group with extId=" + extId);
-            return new ResponseEntity<WebserviceResult>(result, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<WebserviceResult>(result, HttpStatus.OK);
         }
 
         result.addDataElement("socialgroup", ShallowCopier.shallowCopySocialGroup(socialGroup));

@@ -28,7 +28,9 @@ angular.module('tabletuing.services', ['ngResource'])
 		  return $resource(contextPath + '/api/rest/individuals/:path/:id',
 			  {},
 			  {
-				  getIndividual: {method: "GET"}
+				  getIndividual: {method: "GET"},
+				  getIndividualsForSocialGroup: {method: "GET", params: {path: "socialgroup"}},
+				  createIndividual: {method: "POST"}
 			  });
 	  }])
 	  .factory('socialGroupService', ['$resource', function($resource) {

@@ -29,10 +29,10 @@ angular.module('tabletuing', [
 	  		templateUrl: 'partials/form/individual.html', 
 	  		controller: 'IndividualCtrl'
 	  	})
-	  .when('/form/household', {
-	  		templateUrl: 'partials/form/household.html', 
-	  		controller: 'HouseholdCtrl'
-	  	})
+//	  .when('/form/household', {
+//	  		templateUrl: 'partials/form/household.html', 
+//	  		controller: 'HouseholdCtrl'
+//	  	})
 	  .when('/form/marriage', {
 	  		templateUrl: 'partials/form/marriage.html', 
 	  		controller: 'MarriageCtrl'
