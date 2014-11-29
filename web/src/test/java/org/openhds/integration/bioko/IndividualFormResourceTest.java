@@ -1,12 +1,13 @@
 package org.openhds.integration.bioko;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.dao.service.GenericDao;
@@ -41,6 +42,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
         DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
 @DatabaseSetup(value = "/individualFormResourceDb.xml", type = DatabaseOperation.REFRESH)
+@Ignore
 public class IndividualFormResourceTest extends AbstractResourceTest {
 
     private static final String A_DATE = "2000-01-01T00:00:00-05:00";
