@@ -209,7 +209,7 @@ public class LocationResource {
             StringWriter writer = new StringWriter();
             marshaller.marshal(location, writer);
             ErrorLog error = ErrorLogUtil.generateErrorLog(ErrorConstants.UNASSIGNED, writer.toString(), null, Location.class.getSimpleName(),
-                    location.getCollectedBy(), ErrorConstants.UNRESOLVED_ERROR_STATUS, cv.getViolations());
+                     location.getCollectedBy(), ErrorConstants.UNRESOLVED_ERROR_STATUS, cv.getViolations());
             errorService.logError(error);
             return WebserviceResultHelper.genericConstraintResponse(cv);        }
 
