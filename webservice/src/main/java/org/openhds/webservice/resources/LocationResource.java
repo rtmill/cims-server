@@ -205,6 +205,7 @@ public class LocationResource {
         location.setLocationHierarchy(fieldBuilder.referenceField(location.getLocationHierarchy(), cv));
 
         if (cv.hasViolations()) {
+        	logger.info("Constraint violations creating location from json=" + cv.getViolations());
             StringWriter writer = new StringWriter();
             marshaller.marshal(location, writer);
             ErrorLog error = ErrorLogUtil.generateErrorLog(ErrorConstants.UNASSIGNED, writer.toString(), null, Location.class.getSimpleName(),
