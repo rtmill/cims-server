@@ -33,6 +33,13 @@ angular.module('tabletuing.services', ['ngResource'])
 				  createIndividual: {method: "POST"}
 			  });
 	  }])
+	  .factory('individualFormService', ['$resource', function($resource) {
+		  return $resource(contextPath + '/api/rest/individualForm',
+			  {},
+			  {
+				  createIndividualForm: {method: "POST"}
+			  });
+	  }])
 	  .factory('socialGroupService', ['$resource', function($resource) {
 		  return $resource(contextPath + '/api/rest/socialgroups/:path/:id',
 			  {},

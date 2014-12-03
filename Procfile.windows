@@ -1,0 +1,1 @@
+web: java -jar web/target/dependency/webapp-runner.jar web/target/*.war

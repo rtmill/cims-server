@@ -1,14 +1,15 @@
 package org.openhds.domain.model.bioko;
 
-import org.openhds.domain.annotations.Description;
+import java.io.Serializable;
+import java.util.Calendar;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
-import java.util.Calendar;
+
+import org.openhds.domain.annotations.Description;
 
 /**
  * Written by Ben Heasly to model incoming forms for the bioko island project.
@@ -86,6 +87,8 @@ public class IndividualForm implements Serializable {
     @XmlElement(name = "individual_nationality")
     private String individualNationality;
 
+    public IndividualForm() {}
+    
     public boolean isProcessedByMirth() {
         return processedByMirth;
     }

@@ -271,16 +271,20 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 //      
 //      init();          
 //  }])
-    .controller('IndividualCtrl', ['$scope', '$rootScope', '$resource', '$location', 'individualService', 'openModal', function ($scope, $rootScope, $resource, $location, individualService, openModal) {  
+    .controller('IndividualCtrl', ['$scope', '$rootScope', '$resource', '$location', 'individualFormService', 'openModal', function ($scope, $rootScope, $resource, $location, individualFormService, openModal) {  
 	 
-  	   $scope.cancelNewIndividual = function(parentExtId) {
- 		   $location.path('/home');
-	   }
-  	   
-       $scope.createNewIndividual = function() {
+    	$scope.cancelNewIndividual = function(parentExtId) {
+    		$location.path('/home');
+		}
+	  	   
+	    $scope.createNewIndividual = function() {
+	    	
+    	$scope.newIndividual.individualRelationshipToHeadOfHousehold = ($rootScope.selectedHousehold !== null ? "1" : "0");
+    	   
+    	
        	$scope.newIndividual.locationHierarchy = $scope.parentLocationHierarchy;
        	
-       	locationService.createIndividual($scope.newIndividual).$promise.then(
+       	individualFormService.createIndividualForm($scope.newIndividual).$promise.then(
        		function(result) {
        			// TODO handle result of creating individual
        			$location.path("/home");

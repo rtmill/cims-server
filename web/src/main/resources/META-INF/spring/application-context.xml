@@ -14,6 +14,7 @@
 	<bean id="databaseConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
 		<property name="locations">
 			<list>
 				<value>classpath:database.properties</value>
@@ -64,12 +65,32 @@
 	</bean>
 
 	<!-- Configure Spring Security -->
+<!-- 	<security:http pattern="/securitytest/**" auto-config="true"> -->
+<!-- 		<security:form-login -->
+<!-- 			authentication-success-handler-ref="authSuccessHandler" login-page="/login.faces?sectest=1" -->
+<!-- 			login-processing-url="/loginProcess" authentication-failure-url="/login.faces?login_error=2" /> -->
+<!-- 		<security:intercept-url pattern="/**" -->
+<!-- 			access="ROLE_AUTHENTICATED" /> -->
+<!-- 	</security:http> -->
+	
 	<security:http auto-config="true">
 		<security:form-login
 			authentication-success-handler-ref="authSuccessHandler" login-page="/login.faces"
 			login-processing-url="/loginProcess" authentication-failure-url="/login.faces?login_error=1" />
 		<security:intercept-url pattern="/login.faces"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		
+		<!-- TODO: consolidate tabletui resources for security -->
+<!-- 		<security:intercept-url pattern="/tabletui.jsp" -->
+<!-- 			access="IS_AUTHENTICATED_ANONYMOUSLY" /> -->
+<!-- 		<security:intercept-url pattern="/partials/**" -->
+<!-- 			access="IS_AUTHENTICATED_ANONYMOUSLY" /> -->
+<!-- 		<security:intercept-url pattern="/resources/scripts/ng/**" -->
+<!-- 			access="IS_AUTHENTICATED_ANONYMOUSLY" /> -->
+<!-- 		<security:intercept-url pattern="/resources/css/**" -->
+<!-- 			access="IS_AUTHENTICATED_ANONYMOUSLY" /> -->
+<!-- 		<security:intercept-url pattern="/rest/auth" access="IS_AUTHENTICATED_ANONYMOUSLY" />			 -->
+			
 		<security:intercept-url pattern="/resources/images/**"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<security:intercept-url pattern="/resources/css/main.css"
@@ -670,6 +691,7 @@
 	</bean>
 
 	<bean id="databaseConfig" class="org.openhds.web.beans.DatabaseConfigBean">
+		<property name="dbType" value="${dbType}" />
 		<property name="dbDriver" value="${dbDriver}" />
 		<property name="dbUrl" value="${dbUrl}" />
 		<property name="dbUsername" value="${dbUser}" />
