@@ -1,7 +1,6 @@
 'use strict';
 
 /* Controllers */
-
 angular.module('tabletuing.controllers', ['ui.bootstrap'])
    .controller('MainCtrl', ['$scope', '$rootScope', '$resource', '$location', 'locationService', 'locationHierService', 'socialGroupService', 'individualService',
                             function ($scope, $rootScope, $resource, $location, locationService, locationHierService, socialGroupService, individualService) {
@@ -14,6 +13,7 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 	   // supported levels (Region, SubRegion, Village, etc.)
 	   $scope.hierarchyLevels = [];
 	   
+	   // TODO use factory to share data between controllers and not rootScope
 	   // selected objects used in multiple controllers
 	   $rootScope.selectedLocation = null;
 	   $rootScope.selectedHousehold = null;
@@ -21,7 +21,7 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 	   
 	   $rootScope.locations = [];
 	   $rootScope.households = [];
-	   $scope.individuals = [];
+	   $rootScope.individuals = [];
 	   
 	   var HIERARCHY_ROOT = 'HIERARCHY_ROOT';
 	   // default to root
@@ -35,7 +35,6 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 		   return location;
 	   };
 	   $scope.disableLevel = function(index) {
-		   //console.log("index " + index + " selected hier length " + $scope.selectedHierList.length);
 		   return index >= $scope.selectedHierList.length;
 	   };
 	   $scope.levelSelected = function(index) {
@@ -45,6 +44,7 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 		   $rootScope.locations = [];
 		   $rootScope.selectedHousehold = null;
 		   $rootScope.households = [];
+		   $rootScope.individuals = [];
 		   $rootScope.selectedIndividual = null;
 		   
 		   // pop off selected level
@@ -65,16 +65,21 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 		   
 	   }
 	   $scope.selectLocation = function() {
-		   locationService.getLocationsForLevel({id : $scope.selectedLevel.uuid})
+		   	$rootScope.selectedLocation = null;
+	   		$rootScope.locations = [];
+		   	$rootScope.individuals = [];
+		   	$rootScope.selectedHousehold = null;
+		   	locationService.getLocationsForLevel({id : $scope.selectedLevel.uuid})
 	   			.$promise
 	   			.then(function(result) {
 	   				$rootScope.locations = result.data.locations;
 	   			});
-		   $rootScope.selectedLocation = null;
 	   }
 	   $scope.selectLocationItem = function(loc) {
 		   $rootScope.selectedLocation = loc;
 		   $rootScope.locations = [];
+		   $rootScope.individuals = [];
+		   $rootScope.selectedHousehold = null;
 		   
 		   // load social group with same extId as location
 		   // if there is no social group found then allow for creation of individual and social group
@@ -86,19 +91,19 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 		   		.$promise
 		   		.then(function(result){
 		   			console.log("Get social group by extId=" + loc.extId + " " + result.data);
-		   			if ($rootScope.selectedHousehold !== null) {
+		   			if (result.data.socialgroup != null) {
 		   				$rootScope.selectedHousehold = result.data.socialgroup;
+		   				
+		   			   var householdExtId = $rootScope.selectedHousehold.extId;
+		 			   console.log("Loading individuals for social group with extId=" + householdExtId);
+		 			   // load individuals for location
+		 			   individualService.getIndividualsForSocialGroup({id:householdExtId})
+		 			   	.$promise
+		 			   	.then(function(result) {
+		 			   		$rootScope.individuals = result.data.individuals;
+		 			   	});
 		   			}
 		   		});
-		   
-		   if ($rootScope.selectedHousehold != null) {
-			   // load individuals for location
-			   individualService.getIndividualsForSocialGroup({id:$rootScope.selectedHousehold.extId})
-			   	.$promise
-			   	.then(function(result) {
-			   		$scope.individuals = result.data.individuals;
-			   	});
-		   };
 	   }
 	   
 	   $scope.disableLocation = function() {
@@ -110,23 +115,13 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 	   $scope.showCreateLocationButton = function() {
 		   return ($scope.selectedHierList.length >= $scope.hierarchyLevels.length);
 	   };
-//	   $scope.showCreateHouseholdButton = function() {
-//		   return ($scope.selectedHierList.length >= $scope.hierarchyLevels.length && $rootScope.selectedLocation !== null);
-//	   };
-//	   $scope.showCreateHeadOfHouseholdButton = function() {
-//		   return ($rootScope.selectedLocation != null && $rootScope.selectedHousehold != null && $rootScope.selectedHousehold.groupHead == null);
-//	   };
 	   $scope.showCreateIndividualButton = function() {
-		   return ($rootScope.selectedLocation != null); // && $rootScope.selectedHousehold.groupHead != null);
+		   return ($rootScope.selectedLocation != null);
 	   };
 	   $scope.showCreateRelationshipButton = function() {
 		   return false;
 	   };
-//	   
-	  // $scope.clearLocationEnabled = function() {
-//		   return ($rootScope.selectedLocation !== null);
-//	   };
-	   
+
 	   $scope.byParent = function() {
 		   return function( item ) {
 			   return (item.parent.extId == $scope.parentExtId);
@@ -138,7 +133,6 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 		   $scope.selectedLevel = selectedItem;
 		   $scope.parentExtId = selectedItem.extId;
 		   
-		  
 		   // load locations if last level selected
 		   if ($scope.selectedHierList.length >= $scope.hierarchyLevels.length) {
 			   
@@ -147,7 +141,6 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 			   		.then(function(result) {
 			   			$rootScope.locations = result.data.locations;
 			   		 });
-
 		   }
 	   }
 	   
@@ -166,6 +159,55 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 		   $location.path( path );
 	    };
 
+	   // TODO change into service to get display strings for creating individual form
+	   // possibly get values from server
+	   $scope.getIndRelationshipToHead = function(ind) {
+		   var display = "Undefiined";
+		  
+		   if (ind != null && ind.allMemberships[0] != null && ind.allMemberships[0].bIsToA != null) {
+			   switch(ind.allMemberships[0].bIsToA) {
+			    case "1":
+			        display = "Head";
+			        break;
+			    case "2":
+			        display = "Spouse";
+			        break;
+			    case "3":
+			        display = "Son/Daughter";
+			        break;
+			    case "4":
+			        display = "Brother/Sister";
+			        break;
+			    case "5":
+			        display = "Parent";
+			        break;
+			    case "6":
+			        display = "Grandchild";
+			        break;
+			    case "7":
+			        display = "Not Relaed";
+			        break;
+			    case "8":
+			        display = "Other Relative";
+			        break;
+			    case "9":
+			        display = "Don't Know";
+			        break;
+			    case "10":
+			        display = "Cousin";
+			        break;
+			    case "11":
+			        display = "Nephew/Niece";
+			        break;
+			    default:
+			    	display = "N/A";
+			    	break;
+			}
+		   }
+		   
+		   return display;
+	   } 
+	   
 	   var init = function () {
 		   locationHierService.get().$promise.then(function (result) {
 		       $scope.hierarchyItems = result.data.locationhierarchies;
@@ -190,13 +232,15 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
         		function(result) {
         			$rootScope.selectedLocation = result.data.location;
         			$rootScope.locations = [];
+        			$rootScope.selectedHousehold = null;
+        			$rootScope.individuals = [];
         			$location.path("/home");
         		},
         		function(error) {
         			var title, items;
         			if (error.status == '400') {
         				title = error.data.resultMessage;
-        				if (error.data.resultCode == RESULT_CODES.CONSTAINT_VIOLATIONS_CODE) {
+        				if (error.data.resultCode == RESULT_CODES.CONSTRAINT_VIOLATIONS_CODE) {
         					items = error.data.data.constraintViolations;
         				}
         			} else {
@@ -236,90 +280,98 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
         
         init();          
   }])
-//  .controller('HouseholdCtrl', ['$scope', '$rootScope', '$resource', '$location', 'socialGroupService', 'openModal', 'RESULT_CODES', 
-//                                function ($scope, $rootScope, $resource, $location, socialGroupService, openModal, RESULT_CODES) {  
-//	  $scope.createNewHousehold = function() {
-//      	socialGroupService.createSocialGroup($scope.newHousehold).$promise.then(
-//      		function(result) {
-//      			$rootScope.selectedHousehold = result.data.socialgroup;
-//      			$location.path("/home");
-//      		},
-//      		// duplicated from create location
-//    		function(error) {
-//    			var title, items;
-//    			if (error.status == '400') {
-//    				title = error.data.resultMessage;
-//    				if (error.data.resultCode == RESULT_CODES.CONSTAINT_VIOLATIONS_CODE) {
-//    					items = error.data.data.constraintViolations;
-//    				}
-//    			} else {
-//    				title = 'Error ' + error.status;
-//    			}
-//    			
-//    			openModal(title, items);
-//    		});
-//      };
-//      
-//	   $scope.cancelNewHousehold = function() {
-//		   $location.path("/home");
-//	   }
-//      
-//	  var init = function() {
-//     		
-//      	
-//      };
-//      
-//      init();          
-//  }])
-    .controller('IndividualCtrl', ['$scope', '$rootScope', '$resource', '$location', 'individualFormService', 'openModal', function ($scope, $rootScope, $resource, $location, individualFormService, openModal) {  
+    .controller('IndividualCtrl', ['$scope', '$rootScope', '$resource', '$location', 'individualFormService', 'individualService', 'RESULT_CODES', 'openModal', 
+                                   function ($scope, $rootScope, $resource, $location, individualFormService, individualService, RESULT_CODES, openModal) {  
 	 
-    	$scope.cancelNewIndividual = function(parentExtId) {
-    		$location.path('/home');
-		}
-	  	   
-	    $scope.createNewIndividual = function() {
-	    	
-    	$scope.newIndividual.individualRelationshipToHeadOfHousehold = ($rootScope.selectedHousehold !== null ? "1" : "0");
-    	   
-    	
-       	$scope.newIndividual.locationHierarchy = $scope.parentLocationHierarchy;
-       	
-       	individualFormService.createIndividualForm($scope.newIndividual).$promise.then(
-       		function(result) {
-       			// TODO handle result of creating individual
-       			$location.path("/home");
-       		},
-       		function(error) {
-       			var title, items;
-       			if (error.status == '400') {
-       				title = error.data.resultMessage;
-       				if (error.data.resultCode == RESULT_CODES.CONSTAINT_VIOLATIONS_CODE) {
-       					items = error.data.data.constraintViolations;
-       				}
-       			} else {
-       				title = 'Error ' + error.status;
-       			}
-       			
-       			openModal(title, items);
-       		});
-       };
-    	
        	var init = function() {
-       		if ($rootScope.selectedLocation == null) {
+       		if ($scope.selectedLocation == null) {
        			$location.path("/home");
        		}
         };
         
-        init();          
-  }])
-    .controller('MarriageCtrl', ['$scope', '$rootScope', '$resource', '$location', 'openModal', function ($scope, $rootScope, $resource, $location, openModal) {  
-	   
-       	var init = function() {
-       		
-        	
-        };
-        
-        init();          
+        init(); 
+    	
+    	// start date picker
+    	 $scope.today = function() {
+    		    $scope.dt = new Date();
+		  };
+		  $scope.today();
+
+		  $scope.clear = function () {
+		    $scope.dt = null;
+		  };
+
+		  // Disable weekend selection
+		  $scope.disabled = function(date, mode) {
+		    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+		  };
+
+		  $scope.toggleMin = function() {
+		    $scope.minDate = $scope.minDate ? null : new Date();
+		  };
+		  $scope.toggleMin();
+
+		  $scope.open = function($event) {
+		    $event.preventDefault();
+		    $event.stopPropagation();
+
+		    $scope.opened = true;
+		  };
+
+		  $scope.dateOptions = {
+		    formatYear: 'yy',
+		    startingDay: 1
+		  };
+    	// end date picker
+    	
+    	$scope.cancelNewIndividual = function(parentExtId) {
+    		$location.path('/home');
+		}
+	  	
+    	$scope.parentLocationHierarchy = $scope.selectedLevel;
+    	$scope.newIndividual = {
+    			collectionDateTime: new Date(),
+    			householdExtId: null
+    	};
+    	
+    	if ($scope.selectedLocation != null) {
+    		 $scope.newIndividual.householdExtId = $scope.selectedLocation.extId
+    	}
+    	
+	    $scope.createNewIndividual = function() {
+	    	
+	    	individualFormService.createIndividualForm($scope.newIndividual).$promise.then(
+	       		function(result) {
+	       			
+	       			// TODO load new household created when head of household is created
+	       			$rootScope.selectedHousehold = {
+	       					extId :  $scope.selectedLocation.extId,
+	       					groupName :  $scope.selectedLocation.locationName
+	       			}
+	       			
+	       			// get all individuals for selected location/household
+	       			individualService.getIndividualsForSocialGroup({id:$scope.selectedLocation.extId})
+	 			   	.$promise
+	 			   	.then(function(result) {
+	 			   		$rootScope.individuals = result.data.individuals;
+	 			   	});
+	       			
+	       			$location.path("/home");
+	       		},
+	       		function(error) {
+	       			var title, items;
+	       			if (error.status == '400') {
+	       				title = error.data.resultMessage;
+	       				if (error.data.resultCode == RESULT_CODES.CONSTRAINT_VIOLATIONS_CODE) {
+	       					items = error.data.data.constraintViolations;
+	       				}
+	       			} else {
+	       				title = 'Error ' + error.status;
+	       			}
+	       			
+	       			openModal(title, items);
+	       	});
+       };         
   }])
   .controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'title', 'items', function($scope, $modalInstance, title, items) {
     	 $scope.modalTitle = title;
