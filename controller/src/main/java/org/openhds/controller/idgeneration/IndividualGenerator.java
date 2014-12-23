@@ -40,13 +40,14 @@ public class IndividualGenerator extends Generator<Individual> {
 		
 		while(itr.hasNext()) {
 			String key = itr.next();
-			Integer filter = fields.get(key);
-			
+			//Integer filter = fields.get(key);
+			Integer filter = 5;
 			if (filter != null) {
 			
 				if (key.equals(IdGeneratedFields.LOCATION_PREFIX.toString())) {
-					//String fname = individual.getFirstName();
-					String extId = location.getExtId();
+					// use standard prefix
+					//String extId = location.getExtId();
+					String extId = "INDVL";
 					
 					if (extId.length() >= filter) {
 						
