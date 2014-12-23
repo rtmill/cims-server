@@ -1,6 +1,5 @@
 'use strict';
 
-
 // Declare app level module which depends on filters, and services
 angular.module('tabletuing', [
   'ngRoute',
@@ -15,7 +14,7 @@ angular.module('tabletuing', [
 	  "FAILURE": "failure",
 	  "ERROR": "error",
       "SUCCESS_CODE": 1,
-      "CONSTAINT_VIOLATIONS_CODE": 2,
+      "CONSTRAINT_VIOLATIONS_CODE": 2,
       "ENTITY_NOT_FOUND_CODE": 3,
       "BAD_PARAMETER_CODE": 4
   })
@@ -29,10 +28,6 @@ angular.module('tabletuing', [
 	  		templateUrl: 'partials/form/individual.html', 
 	  		controller: 'IndividualCtrl'
 	  	})
-//	  .when('/form/household', {
-//	  		templateUrl: 'partials/form/household.html', 
-//	  		controller: 'HouseholdCtrl'
-//	  	})
 	  .when('/form/marriage', {
 	  		templateUrl: 'partials/form/marriage.html', 
 	  		controller: 'MarriageCtrl'

@@ -21,24 +21,13 @@
 					<div>Latitude: {{selectedLocation.latitude}}</div>
 					<div>Longitude: {{selectedLocation.longitude}}</div>				
 				</div>
-<!-- 				<div class="voffset2"> -->
-<!-- 					<button type="button" class="btn btn-default btn-custom" ng-disabled="disableHousehold()" ng-click="selectHousehold()">Select Household</button> -->
-<!-- 				</div> -->
 				<div ng-show="selectedHousehold != null">
-					<div>ExtId: {{selectedHousehold.extId}}</div>
-					<div>Name: {{selectedHousehold.groupName}}</div>				
+					<div class="voffset2">
+						<div>Household</div>
+						<div>ExtId: {{selectedHousehold.extId}}</div>
+						<div>Name: {{selectedHousehold.groupName}}</div>
+					</div>				
 				</div>
-<!-- 				<div class="voffset2"> -->
-<!-- 					<h3><span ng-class="true ? 'label label-default' : 'label label-success'">Select Individual</span></h3> -->
-<!--  					<button type="button" class="btn btn-default btn-custom" ng-disabled="disableIndividual()">Select Individual</button>  -->
-<!-- 				</div> -->
-<!-- 				<div ng-show="individual != null"> -->
-<!-- 					ExtId: -->
-<!-- 					<br/> -->
-<!-- 					First Name: -->
-<!-- 					<br/> -->
-<!-- 					Last Name:				 -->
-<!-- 				</div> -->
 		</div>
 		<div class="col-md-6">
 				<div ng-repeat="item in hierarchyItems | filter:byParent()">
@@ -56,48 +45,27 @@
     					<h4>{{loc.extId}}</h4>
     				</div>
   				</div>
+  				
+  				<!-- $rootScope.locations -->
+  				<div ng-repeat="ind in individuals">
+					<h2 ng-show="$first">Individuals</h2>
+    				<div class="text-center hierarchyItem" ng-click="selectIndividualItem(ind)">
+    					<h3>{{ind.firstName}} {{ind.lastName}}</h3>
+    					<h4>Relationship to Head: {{getIndRelationshipToHead(ind)}}</h4>
+    					<h4>{{ind.extId}}</h4>
+    				</div>
+  				</div>
 		</div>
 		<div class="col-md-3">
 			<div>
 				<button type="button" class="btn btn-default btn-custom" ng-show="showCreateLocationButton()" ng-click="createLocation(selectedLevel.extId)">Create Location</button>
 			</div>
-<!-- 			<div class="voffset2"> -->
-<!-- 				<button type="button" class="btn btn-default btn-custom" ng-disabled="true">Create Visit</button> -->
-<!-- 			</div> -->
-<!-- 			<div class="voffset2"> -->
-<!-- 				<button type="button" class="btn btn-default btn-custom" ng-disabled="!clearLocationEnabled()" ng-click="clearLocation()">Clear Location</button> -->
-<!-- 			</div> -->
-<!-- 			<div class="voffset2"> -->
-<!-- 				<button type="button" class="btn btn-default btn-custom" ng-disabled="true">Clear Visit</button> -->
-<!-- 			</div> -->
-<!-- 			<div class="voffset2"> -->
-<!-- 				<button type="button" class="btn btn-default btn-custom" ng-show="showCreateHouseholdButton()" ng-click="createHousehold()">Create Household</button> -->
-<!-- 			</div> -->
-			
 			<div class="voffset2">
 				<button type="button" class="btn btn-default btn-custom" ng-show="showCreateIndividualButton()" ng-click="createIndividual()">
 					Create {{selectedHousehold && 'Member of Household' || 'Head of Household'}} 
 				</button>
 			</div>
-<!-- 			<div class="voffset2"> -->
-<!-- 				<button type="button" class="btn btn-default btn-custom" ng-show="showCreateIndividualButton()" ng-click="createIndividual()">Create Individual</button> -->
-<!-- 			</div> -->
-<!-- 			<div class="voffset2"> -->
-<!-- 				<button type="button" class="btn btn-default btn-custom" ng-disabled="true">Membership</button> -->
-<!-- 			</div> -->
 			<div class="voffset2">
 				<button type="button" class="btn btn-default btn-custom" ng-show="showCreateRelationshipButton()">Create Relationship</button>
 			</div>
-<!-- 			<div class="voffset2"> -->
-<!-- 				<button type="button" class="btn btn-default btn-custom" ng-disabled="true">In Migration</button> -->
-<!-- 			</div> -->
-<!-- 			<div class="voffset2"> -->
-<!-- 				<button type="button" class="btn btn-default btn-custom" ng-disabled="true">Out Migration</button> -->
-<!-- 			</div> -->
-<!-- 			<div class="voffset2"> -->
-<!-- 				<button type="button" class="btn btn-default btn-custom" ng-disabled="true">Pregnancy Registration</button> -->
-<!-- 			</div> -->
-<!-- 			<div class="voffset2"> -->
-<!-- 				<button type="button" class="btn btn-default btn-custom" ng-disabled="true">Birth Registration</button> -->
-<!-- 			</div> -->
 		</div>
