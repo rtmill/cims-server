@@ -32,7 +32,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @XmlRootElement
 @JsonInclude(Include.NON_NULL)
 public class Residency extends AuditableCollectedEntity implements GenericStartEndDateConstraint, Serializable {
-    private static final long serialVersionUID = -4666666231598767965L;
+
+	private static final long serialVersionUID = -4666666231598767965L;
 
     @Searchable
     @ManyToOne
@@ -119,32 +120,41 @@ public class Residency extends AuditableCollectedEntity implements GenericStartE
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
 
-        if (!(other instanceof Residency)) {
-            return false;
-        }
+		result = prime * result
+				+ ((individual == null) ? 0 : individual.hashCode());
+		result = prime * result
+				+ ((location == null) ? 0 : location.hashCode());
 
-        final Residency otherResidency = (Residency) other;
+		return result;
+	}
 
-        if (!individual.getExtId().equals(otherResidency.getIndividual().getExtId())) {
-            return false;
-        }
-
-        if (!location.getExtId().equals(otherResidency.getLocation().getExtId())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return 29*individual.getExtId().hashCode() + location.getExtId().hashCode();
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Residency other = (Residency) obj;
+		
+		if (individual == null) {
+			if (other.individual != null)
+				return false;
+		} else if (!individual.equals(other.individual))
+			return false;
+		if (location == null) {
+			if (other.location != null)
+				return false;
+		} else if (!location.equals(other.location))
+			return false;
+		
+		return true;
+	}
 
     @XmlRootElement
     public static class Residencies implements Serializable {

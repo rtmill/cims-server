@@ -22,6 +22,7 @@ import javax.validation.constraints.Past;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
@@ -124,38 +125,43 @@ public class Relationship extends AuditableCollectedEntity implements
     }
     
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
 
-        if (!(other instanceof Relationship)) {
-            return false;
-        }
+		result = prime * result
+				+ ((individualA == null) ? 0 : individualA.hashCode());
+		result = prime * result
+				+ ((individualB == null) ? 0 : individualB.hashCode());
 
-        final Relationship otherRelationship = (Relationship) other;
+		return result;
+	}
 
-        if (!individualA.getExtId().equals(otherRelationship.getIndividualA().getExtId())) {
-            return false;
-        }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Relationship other = (Relationship) obj;
+		
+		if (individualA == null) {
+			if (other.individualA != null)
+				return false;
+		} else if (!individualA.equals(other.individualA))
+			return false;
+		if (individualB == null) {
+			if (other.individualB != null)
+				return false;
+		} else if (!individualB.equals(other.individualB))
+			return false;
+		
+		return true;
+	}
 
-        if (!individualB.getExtId().equals(otherRelationship.getIndividualB().getExtId())) {
-            return false;
-        }
-
-        if (!aIsToB.equals(otherRelationship.getaIsToB())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return 31*individualA.getExtId().hashCode() + 29*individualB.getExtId().hashCode() + aIsToB.hashCode();
-    }
-
-    @XmlRootElement
+	@XmlRootElement
     public static class Relationships {
 
         private List<Relationship> relationships;

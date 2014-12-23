@@ -108,30 +108,33 @@ public class SocialGroup
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((extId == null) ? 0 : extId.hashCode());
+		
+		return result;
+	}
 
-        if (!(other instanceof SocialGroup)) {
-            return false;
-        }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SocialGroup other = (SocialGroup) obj;
+		if (extId == null) {
+			if (other.extId != null)
+				return false;
+		} else if (!extId.equals(other.extId))
+			return false;
+		
+		return true;
+	}
 
-        final SocialGroup otherSocialGroup = (SocialGroup) other;
-
-        if (!extId.equals(otherSocialGroup.getExtId())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return extId.hashCode();
-    }
-
-    @XmlRootElement
+	@XmlRootElement
     public static class SocialGroups {
 
         private List<SocialGroup> socialGroups;

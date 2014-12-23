@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.openhds.domain.annotations.Description;
 import org.openhds.domain.constraint.*;
-import org.openhds.domain.constraint.CheckEndDateNotBeforeStartDate;
 import org.openhds.domain.util.CalendarAdapter;
 
 @Description(description="A Membership represents an Individual's association with a " +
@@ -130,34 +129,43 @@ public class Membership extends AuditableCollectedEntity implements GenericEndDa
 	}
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
 
-        if (!(other instanceof Membership)) {
-            return false;
-        }
+		result = prime * result
+				+ ((individual == null) ? 0 : individual.hashCode());
+		result = prime * result
+				+ ((socialGroup == null) ? 0 : socialGroup.hashCode());
 
-        final Membership otherMembership = (Membership) other;
+		return result;
+	}
 
-        if (!individual.getExtId().equals(otherMembership.getIndividual().getExtId())) {
-            return false;
-        }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Membership other = (Membership) obj;
+		
+		if (individual == null) {
+			if (other.individual != null)
+				return false;
+		} else if (!individual.equals(other.individual))
+			return false;
+		if (socialGroup == null) {
+			if (other.socialGroup != null)
+				return false;
+		} else if (!socialGroup.equals(other.socialGroup))
+			return false;
+		
+		return true;
+	}
 
-        if (!socialGroup.getExtId().equals(otherMembership.getSocialGroup().getExtId())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return 31*individual.getExtId().hashCode() + 29*socialGroup.getExtId().hashCode();
-    }
-
-    @XmlRootElement
+	@XmlRootElement
     public static class Memberships implements Serializable {
 
         private static final long serialVersionUID = 1L;
