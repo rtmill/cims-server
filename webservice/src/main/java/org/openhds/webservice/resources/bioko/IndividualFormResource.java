@@ -121,15 +121,10 @@ public class IndividualFormResource extends AbstractFormResource {
 
         // collected when?
         Calendar collectionTime = individualForm.getCollectionDateTime();
-        collectionTime = getStartOfDay(collectionTime);
         if (null == collectionTime) {
             collectionTime = getDateInPast();
         }
         
-        if (individualForm.getIndividualDateOfBirth() != null) {
-        	individualForm.setIndividualDateOfBirth(getStartOfDay(individualForm.getIndividualDateOfBirth()));
-        }
-
         // collected by whom?
         FieldWorker collectedBy = fieldWorkerService.findFieldWorkerById(individualForm.getFieldWorkerExtId());
         if (null == collectedBy) {
@@ -286,9 +281,13 @@ public class IndividualFormResource extends AbstractFormResource {
 
 	        // collected when?
 	        Calendar collectionTime = individualForm.getCollectionDateTime();
-	        
+	        collectionTime = getStartOfDay(collectionTime);
 	        if (null == collectionTime) {
 	            collectionTime = getDateInPast();
+	        }
+	        
+	        if (individualForm.getIndividualDateOfBirth() != null) {
+	        	individualForm.setIndividualDateOfBirth(getStartOfDay(individualForm.getIndividualDateOfBirth()));
 	        }
 	
 	        // collected by whom?
