@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -119,8 +121,13 @@ public class IndividualFormResource extends AbstractFormResource {
 
         // collected when?
         Calendar collectionTime = individualForm.getCollectionDateTime();
+        collectionTime = getStartOfDay(collectionTime);
         if (null == collectionTime) {
             collectionTime = getDateInPast();
+        }
+        
+        if (individualForm.getIndividualDateOfBirth() != null) {
+        	individualForm.setIndividualDateOfBirth(getStartOfDay(individualForm.getIndividualDateOfBirth()));
         }
 
         // collected by whom?
@@ -279,6 +286,7 @@ public class IndividualFormResource extends AbstractFormResource {
 
 	        // collected when?
 	        Calendar collectionTime = individualForm.getCollectionDateTime();
+	        
 	        if (null == collectionTime) {
 	            collectionTime = getDateInPast();
 	        }
@@ -631,12 +639,20 @@ public class IndividualFormResource extends AbstractFormResource {
         }
     }
 
-    private String createDTOPayload(IndividualForm individualForm) throws JAXBException {
+	private String createDTOPayload(IndividualForm individualForm)throws JAXBException {
 
-        StringWriter writer = new StringWriter();
-        marshaller.marshal(individualForm, writer);
-        return writer.toString();
+		StringWriter writer = new StringWriter();
+		marshaller.marshal(individualForm, writer);
+		return writer.toString();
+	}
 
-    }
-
+	private Calendar getStartOfDay(Calendar cal) {
+		if (cal != null) {
+			cal.set(Calendar.HOUR_OF_DAY, cal.getMinimum(Calendar.HOUR_OF_DAY));
+			cal.set(Calendar.MINUTE, cal.getMinimum(Calendar.MINUTE));
+			cal.set(Calendar.SECOND, cal.getMinimum(Calendar.SECOND));
+			cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND));
+		}
+		return cal;
+	}
 }

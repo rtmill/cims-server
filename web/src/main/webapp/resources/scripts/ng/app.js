@@ -28,10 +28,6 @@ angular.module('tabletuing', [
 	  		templateUrl: 'partials/form/individual.html', 
 	  		controller: 'IndividualCtrl'
 	  	})
-	  .when('/form/marriage', {
-	  		templateUrl: 'partials/form/marriage.html', 
-	  		controller: 'MarriageCtrl'
-	  	})
 	  .when('/home', {templateUrl: 'partials/home.html'})
 	  .otherwise({redirectTo: '/home'});
 	}]);
