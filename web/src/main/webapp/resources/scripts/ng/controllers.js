@@ -218,7 +218,7 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 		   });
 	   };  
 	   
-	   init();	   
+	   init();
    }])
   .controller('LocationCtrl', ['$scope', '$rootScope', '$resource', '$location', 'locationService', 'locationHierService', 'openModal', 'RESULT_CODES', 
                                function ($scope, $rootScope, $resource, $location, locationService, locationHierService, openModal, RESULT_CODES) {  
@@ -301,15 +301,39 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 		    $scope.dt = null;
 		  };
 
-		  // Disable weekend selection
+		  $scope.setDOB = function() {
+			  
+			  // set DOB if it is not set and both age and age units have values
+			  if ($scope.newIndividual.individualAge !== undefined &&
+					  $scope.newIndividual.individualAgeUnits !== undefined &&  
+					  $scope.newIndividual.individualDateOfBirth === undefined) {
+				  
+				  var age = $scope.newIndividual.individualAge;
+				  var units = $scope.newIndividual.individualAgeUnits;
+				  
+				  // set DOB using values
+				  var newDOB = new Date();
+				  if (units === 'Months') {
+					  newDOB = newDOB.setMonth(newDOB.getMonth() - age);
+				  } else if (units === 'Years') {
+					  newDOB = newDOB.setFullYear(newDOB.getFullYear() - age);
+				  }
+				  
+				  $scope.newIndividual.individualDateOfBirth = new Date(newDOB);
+			  }
+		  }
+		  
+		  // set minimum date of birth to 110 years before today
+		  var date = new Date();
+		  $scope.minDate = date.setFullYear(date.getFullYear() - 110);
+		  
+		  // max date is today
+		  $scope.maxDate = new Date();
+		  
 		  $scope.disabled = function(date, mode) {
-		    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+			// don't disable any dates between min and max
+			return false;
 		  };
-
-		  $scope.toggleMin = function() {
-		    $scope.minDate = $scope.minDate ? null : new Date();
-		  };
-		  $scope.toggleMin();
 
 		  $scope.open = function($event) {
 		    $event.preventDefault();
@@ -329,8 +353,9 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 		}
 	  	
     	$scope.parentLocationHierarchy = $scope.selectedLevel;
+    	
     	$scope.newIndividual = {
-    			collectionDateTime: new Date(),
+    			collectionDateTime: null,
     			householdExtId: null
     	};
     	
@@ -339,6 +364,7 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
     	}
     	
 	    $scope.createNewIndividual = function() {
+	    	$scope.newIndividual.collectionDateTime = new Date();
 	    	
 	    	individualFormService.createIndividualForm($scope.newIndividual).$promise.then(
 	       		function(result) {
@@ -361,12 +387,14 @@ angular.module('tabletuing.controllers', ['ui.bootstrap'])
 	       		function(error) {
 	       			var title, items;
 	       			if (error.status == '400') {
-	       				title = error.data.resultMessage;
 	       				if (error.data.resultCode == RESULT_CODES.CONSTRAINT_VIOLATIONS_CODE) {
+	       					title = error.data.resultMessage;
 	       					items = error.data.data.constraintViolations;
+	       				} else {
+	       					title = "Server error processing individual form";
 	       				}
 	       			} else {
-	       				title = 'Error ' + error.status;
+	       				title = "Server error processing individual form";
 	       			}
 	       			
 	       			openModal(title, items);

@@ -32,6 +32,7 @@ import org.openhds.errorhandling.service.ErrorHandlingService;
 import org.openhds.errorhandling.util.ErrorLogUtil;
 import org.openhds.webservice.FieldBuilder;
 import org.openhds.webservice.response.WebserviceResult;
+import org.openhds.webservice.response.WebserviceResultHelper;
 import org.openhds.webservice.response.constants.ResultCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -366,10 +367,6 @@ public class IndividualFormResource extends AbstractFormResource {
 		        }
 	        }
 	        
-//	        // TODO remove - used for testing
-//	        if (1==1) {
-//	        	throw new RuntimeException("Test exception processing individual form");
-//	        }
     	} catch (SQLException sqlE) {
     		logger.error("SQLException saving individual form", sqlE);
             String errorDataPayload = createDTOPayload(individualForm);
@@ -386,23 +383,21 @@ public class IndividualFormResource extends AbstractFormResource {
             return requestError("Exception processing individual form Exception=" + e.getMessage());
     	}
 
+    	WebserviceResult result = new WebserviceResult();
     	if (cv.hasViolations()) {
     		logger.error("Exception processing individual form", cv);
             String errorDataPayload = createDTOPayload(individualForm);
             ErrorLog error = ErrorLogUtil.generateErrorLog(ErrorConstants.UNASSIGNED, errorDataPayload, null, IndividualForm.class.getSimpleName(),
                     collectedBy, ErrorConstants.UNRESOLVED_ERROR_STATUS, cv.getViolations());
             errorService.logError(error);
-            return requestError(cv);
+
+            return WebserviceResultHelper.constraintViolationResponse(cv, "Constraint violations processing individual form", "failure",  HttpStatus.BAD_REQUEST, ResultCodes.CONSTRAINT_VIOLATIONS_CODE);
+    	} else {
+    		result.setResultCode(ResultCodes.SUCCESS_CODE);
+            result.setStatus(ResultCodes.SUCCESS);
+            result.setResultMessage("Individual form processed");
+            return new ResponseEntity<WebserviceResult>(result, HttpStatus.CREATED);
     	}
-    	
-    	
-    	WebserviceResult result = new WebserviceResult();
-        result.addDataElement("individualform", individualForm);
-        result.setResultCode(ResultCodes.SUCCESS_CODE);
-        result.setStatus(ResultCodes.SUCCESS);
-        result.setResultMessage("Individual form processed");
-        
-        return new ResponseEntity<WebserviceResult>(result, HttpStatus.CREATED);
     }
 
     private Individual findOrMakeIndividual(IndividualForm individualForm, FieldWorker collectedBy,

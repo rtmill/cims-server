@@ -19,12 +19,12 @@
 				</div>
 			</div>
 			
-			<div class="form-group">			
-				<label class="col-md-4 control-label">Collection Date</label>
-				<div class="col-md-4 con">
-				 	<input type="text" class="form-control input-md" value="{{newIndividual.collectionDateTime | date:'yyyy-MM-dd HH:mm:ss'}}" ng-disabled="true"/>
-				</div>
-			</div>
+<!-- 			<div class="form-group">			 -->
+<!-- 				<label class="col-md-4 control-label">Collection Date</label> -->
+<!-- 				<div class="col-md-4 con"> -->
+<!-- 				 	<input type="text" class="form-control input-md" value="{{newIndividual.collectionDateTime | date:'yyyy-MM-dd HH:mm:ss'}}" ng-disabled="true"/> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
 			
 			<div class="form-group" ng-class="{'has-error' : individualForm.fieldWorkerExtId.$invalid && !individualForm.fieldWorkerExtId.$pristine}">
 				<label class="col-md-4 control-label" for="fieldWorkerId">Field Worker ID*</label>
@@ -89,7 +89,7 @@
 			<div class="form-group" ng-class="{'has-error' : individualForm.individualAge.$invalid && !individualForm.individualAge.$pristine}">
 				<label class="col-md-4 control-label" for="individualAge">Age*</label>
 				<div class="col-md-4">
-					<input id="individualAge" name="individualAge" type="text" placeholder="Age" class="form-control input-md" ng-model="newIndividual.individualAge" ng-required="true" ng-pattern="/^(0?[0-9]?[0-9]|10[0-9]|110)$/"> 
+					<input id="individualAge" name="individualAge" type="text" placeholder="Age" class="form-control input-md" ng-model="newIndividual.individualAge" ng-required="true" ng-blur="setDOB()" ng-pattern="/^(0?[0-9]?[0-9]|10[0-9]|110)$/"> 
 						<span class="help-block" ng-show="individualForm.individualAge.$invalid && !individualForm.individualAge.$pristine">
 							<small ng-if="individualForm.individualAge.$error.required">Required</small>
 							<small ng-if="individualForm.individualAge.$error.pattern">Age must be between 0 and 110</small>
@@ -101,7 +101,7 @@
 				<label class="col-md-4 control-label" for="gender">Age Units*</label>
 				<div class="col-md-4">
 					<select id="gender" ng-model="newIndividual.individualAgeUnits"
-						ng-required="true" class="form-control">
+						ng-required="true" class="form-control" ng-change="setDOB()">
 						<option value="Years">Years</option>
 						<option value="Months">Months</option>
 					</select> 
@@ -115,15 +115,16 @@
 				<label class="col-md-4 control-label" for="individualDateOfBirth">Date of Birth*</label>
 		        <div class="col-md-4">
 		            <p class="input-group">
-		              <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="newIndividual.individualDateOfBirth" is-open="opened" 
-		              min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" 
+		              <input type="text" ng-disabled="true" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="newIndividual.individualDateOfBirth" is-open="opened" 
+		              min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" 
+		              show-current-day="false"
 		              date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" id="individualDateOfBirth" name="individualDateOfBirth"/>
 		              <span class="input-group-btn">
 		                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 		              </span>
 		            </p>
 		           	<span class="help-block" ng-show="individualForm.individualDateOfBirth.$invalid && !individualForm.individualDateOfBirth.$pristine">
-						<small ng-if="individualForm.individualDateOfBirth.$invalid">Invalid date - format(yyyy-MM-dd)</small>
+						<small ng-if="individualForm.individualDateOfBirth.$invalid">Required</small>
 					</span>
 		        </div>
 		    </div>
