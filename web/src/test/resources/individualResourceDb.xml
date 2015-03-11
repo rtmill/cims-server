@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+    <individual uuid="OLD" extId="old"
+                firstName="first name 1" lastName="last name 1"
+                age="50" dip="1"
+                insertDate="1990-01-01" deleted="false"
+                collectedBy_uuid="FieldWorker1" insertBy_uuid="User 1"
+                status="P" />
+
+    <individual uuid="NEW" extId="new"
+                firstName="first name 2" lastName="last name 2"
+                age="50" dip="1"
+                insertDate="2010-01-01" deleted="false"
+                collectedBy_uuid="FieldWorker1" insertBy_uuid="User 1"
+                astatus="P" />
+
+    <whitelist uuid="LOCALHOST1" address="127.0.0.1" />
+    <whitelist uuid="LOCALHOST2" address="10.0.2.10" />
+    <whitelist uuid="LOCALHOST3" address="10.0.2.14" />
+    <whitelist uuid="LOCALHOST4" address="141.114.156.167" />
+</dataset>

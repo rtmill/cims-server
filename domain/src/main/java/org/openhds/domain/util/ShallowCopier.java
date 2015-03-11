@@ -228,7 +228,7 @@ public class ShallowCopier {
         try {
             field.setAccessible(true);
 
-            Collection<?> originalCollection = (Collection<?>) field.get(original);
+            Collection<Object> originalCollection = (Collection<Object>) field.get(original);
             if (null == originalCollection) {
                 return;
             }
@@ -245,20 +245,37 @@ public class ShallowCopier {
                 return;
             }
 
-            for (Object object : originalCollection) {
-                if (UuidIdentifiable.class.isAssignableFrom(object.getClass())) {
-                    UuidIdentifiable stub = makeStub((UuidIdentifiable) object);
-                    stubCollection.add(stub);
-                } else {
-                    stubCollection.add(object);
-                }
-            }
+            makeStubsForCollection(originalCollection, stubCollection);
 
         } catch (IllegalAccessException e) {
             logger.error("Can't add element to Collection field <"
                     + field.getName()
                     + "> IllegalAccessException: "
                     + e.getMessage());
+        }
+    }
+
+    // Copy each element from Collection source to destination, make element stubs when possible.
+    public static <T> void makeStubsForCollection(Collection<T> source, Collection<T> destination) {
+        for (T object : source) {
+            if (UuidIdentifiable.class.isAssignableFrom(object.getClass())) {
+                UuidIdentifiable stub = makeStub((UuidIdentifiable) object);
+                destination.add((T)stub);
+            } else {
+                destination.add(object);
+            }
+        }
+    }
+
+    // Copy each element from Collection source to destination, make element shallow copies when possible.
+    public static <T> void makeShallowCopiesForCollection(Collection<T> source, Collection<T> destination) {
+        for (T object : source) {
+            if (UuidIdentifiable.class.isAssignableFrom(object.getClass())) {
+                UuidIdentifiable stub = makeShallowCopy((UuidIdentifiable) object);
+                destination.add((T)stub);
+            } else {
+                destination.add(object);
+            }
         }
     }
 }
