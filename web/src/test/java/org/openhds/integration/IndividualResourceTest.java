@@ -66,17 +66,59 @@ public class IndividualResourceTest {
                 .andExpect(status().isOk())
                 .andExpect(content().mimeType(MediaType.APPLICATION_XML))
                 .andExpect(xpath("/individuals").nodeCount(1))
-                .andExpect(xpath("/individuals/individual[extId='old']/collectedBy/uuid").string("FieldWorker1"))
-                .andExpect(xpath("/individuals/individual[extId='old']/uuid").string("OLD"))
-                .andExpect(xpath("/individuals/individual[extId='old']/firstName").string("first name 1"))
-                .andExpect(xpath("/individuals/individual[extId='old']/lastName").string("last name 1"));
+                .andExpect(xpath("/individuals/individual[extId='flapper']/collectedBy/uuid").string("FieldWorker1"))
+                .andExpect(xpath("/individuals/individual[extId='flapper']/uuid").string("FLAPPER"))
+                .andExpect(xpath("/individuals/individual[extId='flapper']/firstName").string("first name 1"))
+                .andExpect(xpath("/individuals/individual[extId='flapper']/lastName").string("last name 1"));
+    }
+
+    @Test
+    public void testGetIndividualByExtIdXml() throws Exception {
+        mockMvc.perform(get("/individuals/hippie").session(session)
+                .accept(MediaType.APPLICATION_XML))
+                .andExpect(status().isOk())
+                .andExpect(content().mimeType(MediaType.APPLICATION_XML))
+                .andExpect(xpath("/individual").nodeCount(1))
+                .andExpect(xpath("/individual[extId='hippie']/collectedBy/uuid").string("FieldWorker1"))
+                .andExpect(xpath("/individual[extId='hippie']/uuid").string("HIPPIE"))
+                .andExpect(xpath("/individual[extId='hippie']/firstName").string("first name 2"))
+                .andExpect(xpath("/individual[extId='hippie']/lastName").string("last name 2"));
+    }
+
+    @Test
+    public void testGetOldIndividualXml() throws Exception {
+        mockMvc.perform(get("/individuals/byDate")
+                .param("since", "1920-01-01")
+                .param("until", "1930-01-01")
+                .session(session)
+                .accept(MediaType.APPLICATION_XML))
+                .andExpect(status().isOk())
+                .andExpect(content().mimeType(MediaType.APPLICATION_XML))
+                .andExpect(xpath("/individuals").nodeCount(1))
+                .andExpect(xpath("/individuals/individual").nodeCount(1))
+                .andExpect(xpath("/individuals/individual/uuid").string("FLAPPER"));
+    }
+
+    @Test
+    public void testGetNewIndividualXml() throws Exception {
+        mockMvc.perform(get("/individuals/byDate")
+                .param("since", "1965-01-01")
+                .param("until", "1975-01-01")
+                .session(session)
+                .accept(MediaType.APPLICATION_XML))
+                .andExpect(status().isOk())
+                .andExpect(content().mimeType(MediaType.APPLICATION_XML))
+                .andExpect(xpath("/individuals").nodeCount(1))
+                .andExpect(xpath("/individuals/individual").nodeCount(1))
+                .andExpect(xpath("/individuals/individual/uuid").string("HIPPIE"));
     }
 
     private MockHttpSession getMockHttpSession(String username, String password) throws Exception {
-        return (MockHttpSession)mockMvc.perform(post("/loginProcess")
+        return (MockHttpSession)mockMvc.perform(
+                post("/loginProcess")
                         .param("j_username", username)
-                        .param("j_password", password)
-        ).andReturn()
+                        .param("j_password", password))
+                .andReturn()
                 .getRequest()
                 .getSession();
     }

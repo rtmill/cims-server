@@ -2,17 +2,17 @@
 
 <dataset>
 
-    <individual uuid="OLD" extId="old"
+    <individual uuid="FLAPPER" extId="flapper"
                 firstName="first name 1" lastName="last name 1"
                 age="50" dip="1"
-                insertDate="1990-01-01" deleted="false"
+                insertDate="1929-01-01" deleted="false"
                 collectedBy_uuid="FieldWorker1" insertBy_uuid="User 1"
                 status="P" />
 
-    <individual uuid="NEW" extId="new"
+    <individual uuid="HIPPIE" extId="hippie"
                 firstName="first name 2" lastName="last name 2"
                 age="50" dip="1"
-                insertDate="2010-01-01" deleted="false"
+                insertDate="1969-01-01" deleted="false"
                 collectedBy_uuid="FieldWorker1" insertBy_uuid="User 1"
                 astatus="P" />
 
