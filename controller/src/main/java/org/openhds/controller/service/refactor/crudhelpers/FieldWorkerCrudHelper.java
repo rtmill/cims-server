@@ -51,9 +51,11 @@ public class FieldWorkerCrudHelper extends AbstractEntityCrudHelperImpl<FieldWor
     }
 
 
+
+
     @Override
     public FieldWorker getByExtId(String id) {
-        return genericDao.findByProperty(FieldWorker.class, "extId", id, true);
+        return genericDao.findByProperty(FieldWorker.class,"extId",id);
     }
 
     @Override

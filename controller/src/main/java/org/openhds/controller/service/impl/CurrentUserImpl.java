@@ -30,11 +30,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public class CurrentUserImpl implements CurrentUser, BeanFactoryAware {
 
-    private Dao<org.openhds.domain.model.User, String> userDao;
+    private Dao<User, String> userDao;
     private BeanFactory beanFactory;
     
 	public void setProxyUser(String username, String password, String[] privileges) {
-		Collection<GrantedAuthority> authorities = new ArrayList<>();
+		Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 		
 		for(String privilege : privileges) {
 			authorities.add(new GrantedAuthorityImpl(privilege));
@@ -44,12 +44,12 @@ public class CurrentUserImpl implements CurrentUser, BeanFactoryAware {
 		SecurityContextHolder.getContext().setAuthentication(auth);
 	}
 
-    public org.openhds.domain.model.User getCurrentUser() {
+    public User getCurrentUser() {
    		return  findUser();
     }
 
 	public Set<Privilege> getCurrentUserPrivileges() {
-		Set<Privilege> privileges = new HashSet<>();
+		Set<Privilege> privileges = new HashSet<Privilege>();
 
 		for(GrantedAuthority authority : getGrantedAuthorities()) {
 			Privilege privilege = new Privilege(authority.getAuthority());
@@ -84,7 +84,7 @@ public class CurrentUserImpl implements CurrentUser, BeanFactoryAware {
      * NOTE: The Spring Security user differs from the OpenHDS User
      * @return the User object for the current logged in Spring user
      */
-	private org.openhds.domain.model.User findUser() {
+	private User findUser() {
 		// attempt to read user from the request cache
 		// NOTE: had to use bean factory because the bean has scope "request"
 		UserCache cache = (UserCache) beanFactory.getBean("userCache");
@@ -109,11 +109,11 @@ public class CurrentUserImpl implements CurrentUser, BeanFactoryAware {
 		return obj;
 	}	
 	
-    public Dao<org.openhds.domain.model.User, String> getUserDao() {
+    public Dao<User, String> getUserDao() {
         return userDao;
     }
 
-    public void setUserDao(Dao<org.openhds.domain.model.User, String> userDao) {
+    public void setUserDao(Dao<User, String> userDao) {
         this.userDao = userDao;
     }
 

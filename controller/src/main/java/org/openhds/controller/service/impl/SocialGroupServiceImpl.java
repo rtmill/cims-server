@@ -67,7 +67,7 @@ public class SocialGroupServiceImpl implements SocialGroupService {
      * in performing autocomplete.
      */
     public List<String> getSocialGroupExtIds(String term) {
-        List<String> ids = new ArrayList<>();
+        List<String> ids = new ArrayList<String>();
         List<SocialGroup> list = genericDao.findListByPropertyPrefix(SocialGroup.class, "extId",
                 term, 10, true);
         for (SocialGroup sg : list) {
@@ -102,7 +102,7 @@ public class SocialGroupServiceImpl implements SocialGroupService {
 
     public List<Individual> getAllIndividualsOfSocialGroup(SocialGroup group) {
 
-        List<Individual> list = new ArrayList<>();
+        List<Individual> list = new ArrayList<Individual>();
         List<Membership> mems = genericDao.findListByProperty(Membership.class, "socialGroup",
                 group);
 
@@ -142,14 +142,16 @@ public class SocialGroupServiceImpl implements SocialGroupService {
 
         // Remove all Memberships from the Social Group
         Set<Membership> mems = group.getMemberships();
+        Iterator<Membership> itr = mems.iterator();
 
-        for (Membership item : mems) {
+        while (itr.hasNext()) {
+            Membership item = itr.next();
             item.setDeleted(true);
             service.save(item);
         }
 
         // Create new Memberships
-        Iterator<Membership> itr = memberships.iterator();
+        itr = memberships.iterator();
         for (Membership item : memberships)
             service.create(item);
 
@@ -157,7 +159,7 @@ public class SocialGroupServiceImpl implements SocialGroupService {
     }
 
     public SocialGroup findSocialGroupById(String socialGroupId, String msg) throws Exception {
-        SocialGroup sg = genericDao.findByProperty(SocialGroup.class, "extId", socialGroupId, true);
+        SocialGroup sg = genericDao.findByProperty(SocialGroup.class, "extId", socialGroupId);
         if (sg == null) {
             throw new Exception(msg);
         }
@@ -165,7 +167,7 @@ public class SocialGroupServiceImpl implements SocialGroupService {
     }
 
     public SocialGroup findSocialGroupById(String sgExtId) {
-        SocialGroup sg = genericDao.findByProperty(SocialGroup.class, "extId", sgExtId, true);
+        SocialGroup sg = genericDao.findByProperty(SocialGroup.class, "extId", sgExtId);
         return sg;
     }
 

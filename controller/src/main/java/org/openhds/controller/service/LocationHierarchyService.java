@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.openhds.controller.exception.ConstraintViolations;
 import org.openhds.domain.annotations.Authorized;
-import org.openhds.domain.model.Location;
-import org.openhds.domain.model.LocationHierarchy;
-import org.openhds.domain.model.LocationHierarchyLevel;
-import org.openhds.domain.model.PrivilegeConstants;
+import org.openhds.domain.model.*;
 
 public interface LocationHierarchyService {
 
     @Authorized({PrivilegeConstants.VIEW_ENTITY})
     int getMaxBuildingNumber(LocationHierarchy locationHierarchy);
+    
+    @Authorized({PrivilegeConstants.VIEW_ENTITY})
+    List<Location> getLocationsForLH(LocationHierarchy locationHierarchy);
 
     @Authorized({PrivilegeConstants.CREATE_ENTITY})
     LocationHierarchy findByUuid(String uuid);
@@ -97,7 +97,7 @@ public interface LocationHierarchyService {
 
 	@Authorized({PrivilegeConstants.VIEW_ENTITY})
     List<Location> getAllLocations();
-
+	
 	@Authorized({PrivilegeConstants.CREATE_ENTITY})
     void createLocation(Location location) throws ConstraintViolations;
 
@@ -112,5 +112,9 @@ public interface LocationHierarchyService {
 
 	@Authorized({PrivilegeConstants.EDIT_ENTITY})
 	void updateLocation(Location location) throws ConstraintViolations;
+
+	@Authorized({PrivilegeConstants.VIEW_ENTITY})
+	Location locationStubToLocation(LocationStub locationStub);
+
 }
 

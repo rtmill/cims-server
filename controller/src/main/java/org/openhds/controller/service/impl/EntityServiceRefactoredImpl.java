@@ -2,6 +2,7 @@ package org.openhds.controller.service.impl;
 
 import org.openhds.controller.exception.ConstraintViolations;
 import org.openhds.controller.service.CurrentUser;
+import org.openhds.controller.service.EntityService;
 import org.openhds.controller.service.EntityServiceRefactored;
 import org.openhds.controller.service.EntityValidationService;
 import org.openhds.controller.service.refactor.crudhelpers.AbstractEntityCrudHelperImpl;
@@ -11,8 +12,10 @@ import org.openhds.domain.service.SitePropertiesService;
 import org.openhds.domain.util.CalendarUtil;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 public abstract class EntityServiceRefactoredImpl implements EntityServiceRefactored {
 

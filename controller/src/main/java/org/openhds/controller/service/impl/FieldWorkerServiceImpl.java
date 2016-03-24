@@ -50,7 +50,7 @@ public class FieldWorkerServiceImpl implements FieldWorkerService {
      * Used in performing autocomplete.
      */
     public List<String> getFieldWorkerExtIds(String term) {
-        List<String> ids = new ArrayList<>();
+        List<String> ids = new ArrayList<String>();
         List<FieldWorker> list = genericDao.findListByPropertyPrefix(FieldWorker.class, "extId", term, 10, true);
         for (FieldWorker fw : list) {
             ids.add(fw.getExtId());
@@ -59,8 +59,14 @@ public class FieldWorkerServiceImpl implements FieldWorkerService {
         return ids;
     }
 
+    public FieldWorker findFieldWorkerById(String fieldWorkerId) {
+        FieldWorker fw = genericDao.findByProperty(FieldWorker.class, "extId", fieldWorkerId);
+        return fw;
+    }
+
 	public FieldWorker findFieldWorkerByExtId(String fieldWorkerId) {
-		return genericDao.findByProperty(FieldWorker.class, "extId", fieldWorkerId, true);
+		 FieldWorker fw = genericDao.findByProperty(FieldWorker.class, "extId", fieldWorkerId);
+		 return fw;
 	}
 
 	@Override

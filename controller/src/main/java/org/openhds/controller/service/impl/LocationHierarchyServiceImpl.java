@@ -9,9 +9,11 @@ import org.openhds.domain.annotations.Authorized;
 import org.openhds.domain.model.Location;
 import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.model.LocationHierarchyLevel;
+import org.openhds.domain.model.LocationStub;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
@@ -61,6 +63,13 @@ public class LocationHierarchyServiceImpl implements LocationHierarchyService {
 
         return max;
 
+    }
+    
+    public List<Location> getLocationsForLH(LocationHierarchy locationHierarchy) {
+
+    	List<Location> locations = genericDao.findListByProperty(Location.class, "locationHierarchy", locationHierarchy, true);
+     
+        return locations; 
     }
 
 	public void createLocationHierarchy(LocationHierarchy locationHierarchy) throws ConstraintViolations {
@@ -240,13 +249,13 @@ public class LocationHierarchyServiceImpl implements LocationHierarchyService {
 	 */
 	public boolean checkValidParentLocation(String parent) {
 
-		LocationHierarchy item;
+		LocationHierarchy item = null;
 
 		// Must check that the location exists
 		item = genericDao.findByProperty(LocationHierarchy.class, "name", parent);
 
 		if (genericDao.getTotalCount(LocationHierarchy.class) == 0) {
-			if (item == null && "".equals(parent))
+			if (item == null && parent == "")
 				return true;
 		}
 		else
@@ -274,7 +283,10 @@ public class LocationHierarchyServiceImpl implements LocationHierarchyService {
 
 		List<LocationHierarchy> list = genericDao.findListByProperty(LocationHierarchy.class, "level", getLowestLevel(), false);
 
-		for (LocationHierarchy item : list) {
+		Iterator<LocationHierarchy> itr = list.iterator();
+
+		while(itr.hasNext()) {
+			LocationHierarchy item = itr.next();
 			if (item.getExtId().equals(locExtId))
 				return true;
 		}
@@ -288,7 +300,10 @@ public class LocationHierarchyServiceImpl implements LocationHierarchyService {
 
 		List<Location> list = genericDao.findListByProperty(Location.class, "locationHierarchy", locLvlName, true);
 
-		for (Location loc : list) {
+		Iterator<Location> itr = list.iterator();
+
+		while(itr.hasNext()) {
+			Location loc = itr.next();
 			if (loc.getLocationName().equals(locName))
 				return false;
 		}
@@ -357,7 +372,7 @@ public class LocationHierarchyServiceImpl implements LocationHierarchyService {
 	 * Used in performing autocomplete.
 	 */
 	public List<String> getLocationExtIds(String term) {
-		List<String> ids = new ArrayList<>();
+		List<String> ids = new ArrayList<String>();
 		List<Location> locs = genericDao.findListByPropertyPrefix(Location.class, "extId", term, 10, true);
 		for (Location loc : locs) {
 			ids.add(loc.getExtId());
@@ -370,10 +385,12 @@ public class LocationHierarchyServiceImpl implements LocationHierarchyService {
 	 * Used in performing autocomplete.
 	 */
 	public List<String> getLocationNames(String term) {
-		List<String> names = new ArrayList<>();
+		List<String> names = new ArrayList<String>();
 		List<LocationHierarchy> list = genericDao.findListByPropertyPrefix(LocationHierarchy.class, "name", term, 10,
 				false);
-		for (LocationHierarchy item : list) {
+		Iterator<LocationHierarchy> itr = list.iterator();
+		while (itr.hasNext()) {
+			LocationHierarchy item = itr.next();
 			if (!item.getExtId().equals("HIERARCHY_ROOT")) {
 				if (item.getLevel().equals(getLowestLevel())
 						&& item.getName().toLowerCase().contains(term.toLowerCase())
@@ -385,7 +402,7 @@ public class LocationHierarchyServiceImpl implements LocationHierarchyService {
 	}
 
 	public Location findLocationById(String locationId) {
-		return genericDao.findByProperty(Location.class, "extId", locationId, true);
+		return genericDao.findByProperty(Location.class, "extId", locationId);
 	}
 
 	public LocationHierarchy findLocationHierarchyById(String locationHierarchyId){
@@ -427,7 +444,7 @@ public class LocationHierarchyServiceImpl implements LocationHierarchyService {
 
 	public List<String> getValidLocationsInHierarchy(String locationHierarchyItem) {
 
-		List<String> locations = new ArrayList<>();
+		List<String> locations = new ArrayList<String>();
 		locations.add(locationHierarchyItem);
 		List<LocationHierarchy> hierarchyList = genericDao.findListByProperty(LocationHierarchy.class, "extId", locationHierarchyItem);
 		for (LocationHierarchy item : hierarchyList) {
@@ -516,6 +533,62 @@ public class LocationHierarchyServiceImpl implements LocationHierarchyService {
 			throw new ConstraintViolations("There was a problem updating the location to the database");
 		}
 
+	}
+
+	public Location locationStubToLocation(LocationStub locationStub){
+
+		Location loc = new Location();
+
+		//extId
+		loc.setExtId(locationStub.getExtId());
+
+		// locationName
+		loc.setLocationName(locationStub.getLocationName());
+
+		// status
+		loc.setStatus(locationStub.getStatus());
+
+		// locationType
+		loc.setLocationType(locationStub.getLocationType());
+
+		// provinceName
+		loc.setProvinceName(locationStub.getProvinceName());
+
+		// subDistrictName
+		loc.setDistrictName(locationStub.getDistrictName());
+
+		// sectorName
+		loc.setSectorName(locationStub.getSectorName());
+
+		// localityName
+		loc.setLocalityName(locationStub.getLocalityName());
+
+		// communityName
+		loc.setCommunityName(locationStub.getCommunityName());
+
+		// mapAreaName
+		loc.setMapAreaName(locationStub.getMapAreaName());
+
+		// description
+		loc.setDescription(locationStub.getDescription());
+
+		// buildingNumber
+		loc.setBuildingNumber(locationStub.getBuildingNumber());
+
+		// floorNumber
+		loc.setFloorNumber(locationStub.getFloorNumber());
+
+		// latitude
+		loc.setLatitude(locationStub.getLatitude());
+
+		// longitude
+		loc.setLongitude(locationStub.getLongitude());
+
+		// residencies
+		loc.setResidencies(locationStub.getResidencies());
+
+
+		return loc;
 	}
 
 }

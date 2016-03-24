@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 import org.openhds.controller.exception.ConstraintViolations;
 import org.openhds.controller.service.CurrentUser;
@@ -80,10 +81,10 @@ public class EntityServiceImpl implements EntityService {
 	
 	@Transactional
 	public <T> void delete(T persistentObject) throws SQLException {
-        Method setDeletedMethod;
+        Method setDeletedMethod = null;
         if (persistentObject instanceof AuditableEntity) {
-            Method voidedByMethod;
-            Method voidedDateMethod;
+            Method voidedByMethod = null;
+            Method voidedDateMethod = null;
 
             try {
                 voidedByMethod = persistentObject.getClass().getMethod("setVoidBy", User.class);

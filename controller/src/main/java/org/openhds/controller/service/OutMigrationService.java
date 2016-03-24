@@ -1,5 +1,6 @@
 package org.openhds.controller.service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.openhds.controller.exception.ConstraintViolations;

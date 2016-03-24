@@ -1,6 +1,7 @@
 package org.openhds.controller.service.impl;
 
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import org.openhds.controller.exception.ConstraintViolations;
@@ -70,7 +71,10 @@ public class MembershipServiceImpl extends EntityServiceRefactoredImpl implement
         List<Membership> list = genericDao
                 .findListByProperty(Membership.class, "individual", indiv);
 
-        for (Membership item : list) {
+        Iterator<Membership> itr = list.iterator();
+
+        while (itr.hasNext()) {
+            Membership item = itr.next();
             if (item.getSocialGroup().getExtId().equals(group.getExtId()) && !item.isDeleted())
                 return false;
         }

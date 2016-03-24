@@ -148,10 +148,10 @@ public class RelationshipServiceImpl implements RelationshipService {
 	        		for(Membership m : memsA) {
 	        			if (m.getSocialGroup().getExtId().equals(group.getExtId())) {
 	        				found = true;
-	        				break;
+	        				continue;
 	        			}
 	        		}
-	        		if (!found)
+	        		if (found == false)
 	        			itemsA.remove(i);
 	        	}
 	        	
@@ -162,10 +162,10 @@ public class RelationshipServiceImpl implements RelationshipService {
 	        		for(Membership m : memsB) {
 	        			if (m.getSocialGroup().getExtId().equals(group.getExtId())) {
 	        				found = true;
-	        				break;
+	        				continue;
 	        			}
 	        		}
-	        		if (!found)
+	        		if (found == false)
 	        			itemsA.remove(i);
 	        	}
 		 }	

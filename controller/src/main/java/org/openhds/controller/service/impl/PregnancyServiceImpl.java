@@ -33,19 +33,17 @@ public class PregnancyServiceImpl implements PregnancyService {
 	private IndividualService individualService;
 	private GenericDao genericDao;
 	private SitePropertiesService siteProperties;
-	private CalendarUtil calendarUtil;
 	
-	public PregnancyServiceImpl(EntityService entityService, IndividualService individualService, GenericDao genericDao, SitePropertiesService siteProperties, CalendarUtil calUtil) {
+	public PregnancyServiceImpl(EntityService entityService, IndividualService individualService, GenericDao genericDao, SitePropertiesService siteProperties) {
 		this.entityService = entityService;
 		this.individualService = individualService;
 		this.genericDao = genericDao;
 		this.siteProperties = siteProperties;
-		calendarUtil = calUtil;
 	}
 	
 	public PregnancyObservation evaluatePregnancyObservation(PregnancyObservation entityItem) throws ConstraintViolations {
     	
-		int age = (int) (calendarUtil.daysBetween(entityItem.getMother().getDob(), entityItem.getExpectedDeliveryDate()) / 365.25);
+		int age = (int) (CalendarUtil.daysBetween(entityItem.getMother().getDob(), entityItem.getExpectedDeliveryDate()) / 365.25);
 		if (age  < siteProperties.getMinimumAgeOfPregnancy())
 			throw new ConstraintViolations("The Mother specified is younger than the minimum age required to have a Pregnancy Observation.");	
 		if (!checkDuplicatePregnancyObservation(entityItem.getMother())) 
@@ -91,9 +89,9 @@ public class PregnancyServiceImpl implements PregnancyService {
 		int age;
 		   
 		if (entityItem.getOutcomeDate()==null) {
-			age =  (int) (calendarUtil.daysBetween(entityItem.getMother().getDob(), entityItem.getVisit().getVisitDate()) / 365.25);
+			age =  (int) (CalendarUtil.daysBetween(entityItem.getMother().getDob(), entityItem.getVisit().getVisitDate()) / 365.25);
 		} else {
-			age = (int) (calendarUtil.daysBetween(entityItem.getMother().getDob(), entityItem.getOutcomeDate()) / 365.25);
+			age = (int) (CalendarUtil.daysBetween(entityItem.getMother().getDob(), entityItem.getOutcomeDate()) / 365.25);
 		}
 		if (age < siteProperties.getMinimumAgeOfPregnancy())
 			throw new ConstraintViolations("The Mother specified is younger than the minimum age required to have a Pregnancy Outcome.");	
@@ -203,7 +201,7 @@ public class PregnancyServiceImpl implements PregnancyService {
 		
 	public List<PregnancyOutcome> findAllLiveBirthsBetweenInterval(Calendar startDate, Calendar endDate) {
 		
-		List<PregnancyOutcome> output = new ArrayList<>();
+		List<PregnancyOutcome> output = new ArrayList<PregnancyOutcome>();
 		List<PregnancyOutcome> outcomes = genericDao.findAll(PregnancyOutcome.class, true);
 		
 		for (PregnancyOutcome outcome : outcomes) {			

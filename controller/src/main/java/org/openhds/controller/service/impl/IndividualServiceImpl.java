@@ -114,7 +114,7 @@ public class IndividualServiceImpl implements IndividualService {
      * performing autocomplete.
      */
     public List<String> getIndividualExtIds(String term) {
-        List<String> ids = new ArrayList<>();
+        List<String> ids = new ArrayList<String>();
         List<Individual> list = genericDao.findListByPropertyPrefix(Individual.class, "extId",
                 term, 10, true);
         for (Individual indiv : list) {
@@ -125,7 +125,7 @@ public class IndividualServiceImpl implements IndividualService {
     }
 
     public Individual findIndivById(String indivExtId, String msg) throws Exception {
-        Individual indiv = genericDao.findByProperty(Individual.class, "extId", indivExtId, true);
+        Individual indiv = genericDao.findByProperty(Individual.class, "extId", indivExtId);
         if (indiv == null) {
             throw new Exception(msg);
         }
@@ -134,7 +134,7 @@ public class IndividualServiceImpl implements IndividualService {
 
     @Transactional(readOnly = true)
     public Individual findIndivById(String indivExtId) {
-        Individual indiv = genericDao.findByProperty(Individual.class, "extId", indivExtId, true);
+        Individual indiv = genericDao.findByProperty(Individual.class, "extId", indivExtId);
         return indiv;
     }
 
@@ -179,7 +179,7 @@ public class IndividualServiceImpl implements IndividualService {
         Membership membership = genericDao.findUniqueByPropertyWithOrder(Membership.class,
                 "individual", individual, "startDate", false);
 
-        List<LastEvent> events = new ArrayList<>();
+        List<LastEvent> events = new ArrayList<LastEvent>();
 
         events.add(new LastEvent("Enumeration/Baseline", individual.getDob()));
         if (om != null)
@@ -207,12 +207,13 @@ public class IndividualServiceImpl implements IndividualService {
         });
 
         LastEvent le = new LastEvent(null, null);
+        LastEvent equallyLastEvent = new LastEvent(null, null);
         if (!events.isEmpty() && events.size() > 1) {
             le = events.get(events.size() - 1);
-            LastEvent equallyLastEvent = events.get(events.size() - 2);
-            if ("In Migration. Create membership for this individual".equals(le.eventType)
-                    && "Membership".equals(equallyLastEvent.eventType)
-                    && le.eventDate == equallyLastEvent.eventDate) {  // FIXME: identity comparison, a defect?
+            equallyLastEvent = events.get(events.size() - 2);
+            if (le.eventType == "In Migration. Create membership for this individual"
+                    && equallyLastEvent.eventType == "Membership"
+                    && le.eventDate == equallyLastEvent.eventDate) {
                 le = equallyLastEvent;
             }
 

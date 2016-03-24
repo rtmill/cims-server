@@ -24,6 +24,8 @@ import org.openhds.domain.util.CalendarUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Constraint;
+
 /**
  * Implementation of the ResidencySerivce
  * 
@@ -142,13 +144,13 @@ public class ResidencyServiceImpl extends EntityServiceRefactoredImpl implements
         List<Residency> residencies = genericDao.findListByProperty(Residency.class, "location", location);
 
         /** Filter out residencies that have already ended */
-        List<Residency> unendedResidencies = new ArrayList<>();
+        List<Residency> unendedResidencies = new ArrayList<Residency>();
         for (Residency residency : residencies) {
             if (residency.getEndDate() == null) {
                 unendedResidencies.add(residency);
             }
         }
-        Set<Individual> individuals = new TreeSet<>(new IndividualComparator());
+        Set<Individual> individuals = new TreeSet<Individual>(new IndividualComparator());
 
         for (Residency residency : unendedResidencies) {
         	if (!residency.getIndividual().isDeleted())
@@ -164,7 +166,7 @@ public class ResidencyServiceImpl extends EntityServiceRefactoredImpl implements
             }
         }
 
-        return new ArrayList<>(individuals);
+        return new ArrayList<Individual>(individuals);
     }
 
     public List<Individual> getIndividualsByLocation(Location location, Date startDate, Date endDate) {
@@ -172,13 +174,13 @@ public class ResidencyServiceImpl extends EntityServiceRefactoredImpl implements
         List<Residency> residencies = genericDao.findListByProperty(Residency.class, "location", location);
 
         /** Filter out residencies that have already ended */
-        List<Residency> unendedResidencies = new ArrayList<>();
+        List<Residency> unendedResidencies = new ArrayList<Residency>();
         for (Residency residency : residencies) {
             if (residency.getEndDate() == null) {
                 unendedResidencies.add(residency);
             }
         }
-        Set<Individual> individuals = new TreeSet<>(new IndividualComparator());
+        Set<Individual> individuals = new TreeSet<Individual>(new IndividualComparator());
 
         for (Residency residency : unendedResidencies) {
         	if (!residency.getIndividual().isDeleted())
@@ -194,7 +196,7 @@ public class ResidencyServiceImpl extends EntityServiceRefactoredImpl implements
             }
         }
 
-        return new ArrayList<>(individuals);
+        return new ArrayList<Individual>(individuals);
     }
     
     
