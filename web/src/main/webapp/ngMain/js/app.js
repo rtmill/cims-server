@@ -18,7 +18,7 @@ app.config(['stateHelperProvider','$urlRouterProvider','$urlMatcherFactoryProvid
     stateHelperProvider.state({
         name: "home",
         url: "/",
-        templateUrl: "components/main/main.html",
+        templateUrl: "components/home/main.html",
         controller: "MainController"
 
     }).state({
