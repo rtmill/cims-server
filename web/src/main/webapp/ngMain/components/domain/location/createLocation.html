@@ -1,0 +1,137 @@
+<!-- This partial include Add/Edit Pet and Success Modals -->
+
+
+<!-- Edit Owner Modal -->
+<div class="modal modal-owner fade" id="createLocationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <h1 class="sub-header">Edit Location</h1>
+                            <em class="text-muted">Basic location details</em>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" data-ng-controller="CreateLocationController">
+                <div class="container" >
+                    <div class="row">
+                        <div class="col-md-4 col-md-offset-2">
+
+
+                            <div class="form-group">
+                                <label for="region">Sector</label>
+                                <input type="text" class="form-control" id="region" value="{{newLocation.region.name}}" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="province">Sector</label>
+                                <input type="text" class="form-control" id="province" value="{{newLocation.province.name}}" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="district">Sector</label>
+                                <input type="text" class="form-control" id="district" value="{{newLocation.district.name}}" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="subdistrict">Sector</label>
+                                <input type="text" class="form-control" id="subdistrict" value="{{newLocation.subdistrict.name}}" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="locality">Locality</label>
+                                <input type="text" class="form-control" id="locality" value="{{newLocation.locality.name}}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="mapArea">Map Area</label>
+                                <input type="text" class="form-control" id="mapArea" value="{{newLocation.mapArea.name}}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="sector">Sector</label>
+                                <input type="text" class="form-control" id="sector" value="{{newLocation.sector.name}}" readonly>
+                            </div>
+
+
+
+
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="building">Building</label>
+                                <input type="text" class="form-control" id="building" ng-model="newLocation.building">
+                            </div>
+                            <div class="form-group">
+                                <label for="floor">Floor</label>
+                                <input type="text" class="form-control" id="floor" ng-model="newLocation.floor">
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="locHierarchy">Hierarchy</label>
+                                <input type="text" class="form-control" id="locHierarchy" value="{{newLocation.sector.extId}}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="derived">Derived ExtID</label>
+                                <input type="text" class="form-control" id="derived" value="{{newExtId}}{{newLocation.building}}{{newLocation.floor}}" readonly>
+                            </div>
+
+
+
+                            <div class="col-md-8 col-md-offset-2">
+                                <div class="form-group form-group-action">
+                                    <button class="btn btn-primary" data-toggle="modal" data-target="#addLocationSuccessModal" data-dismiss="modal" aria-label="Close" ng-click="createLocation()">Create Location</button>
+                                    <button class="btn btn-link" class="close" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                </div>
+                            </div>
+
+                            <div ng-if="checkResponse()"> NOT NULL  {{responseString}} </div>
+                            <div ng-if="!checkResponse()">NULL {{responseString}}</div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add New Location Success Modal -->
+<div class="modal modal-owner fade" id="addLocationSuccessModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <h1 class="sub-header">Location added successfully!</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" data-ng-controller="CreateLocationController">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <div class="alert alert-success" role="alert">
+                                Well done! You've successfully added a location.
+                            </div>
+                            <div class="form-group form-group-action">
+                                <button class="btn btn-link" data-dismiss="modal" aria-label="Close">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

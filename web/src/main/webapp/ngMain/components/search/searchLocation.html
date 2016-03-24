@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+
+<div>
+    {{tempVar}}
+</div>
+
+<div>
+    <ul ng-repeat="lvl in levels | orderBy : 'keyIdentifier'">
+        <li>
+            <!--
+
+            <div>
+                <form name="searchLocationForm">
+                    <label for="searchBy"> {{lvl.name}}: </label>
+                    <select name="searchBy" id="searchBy" ng-model="levelChoice">
+                        <option ng-repeat="hier in hierarchies | filter:{level:{name:lvl.name}}" ng-change="selectHier()">
+                            {{hier.name}}
+                        </option>
+
+                    </select>
+                </form>
+            </div>
+
+            -->
+            <div>{{lvl.name}}</div>
+            <select ng-options="hier as hier.name for hier in hierarchies | filter:{level:{name:lvl.name}}"
+                    ng-model="tempHier"
+                    ng-change="selectHier(tempHier)"
+            ></select>
+
+            <div> Selected:    {{selected[lvl.name]}}</div>
+             <!-- <div> Hierarchy Chosen : {{tempHier}}</div> -->
+
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

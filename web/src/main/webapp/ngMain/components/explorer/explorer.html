@@ -1,0 +1,309 @@
+<div id="sidebar">
+
+<!-- 	<section class="section sections-no-padding sections-darker"> -->
+<!-- 		<p></p> -->
+<!-- 		<h2 class="h3 sub-header">Hierarchies</h2> -->
+<!-- 		<p></p> -->
+<!-- 	</section> -->
+
+	<div>
+
+
+		<!-- Region -->
+		<div>
+		<h2 class="sub-header">Region:</h2>
+		<ul>
+			<li ng-if="!isCurrentRegionNotNull()"
+				ng-repeat="region in locHierarchies | filter:{level:{name:'Region'}}">
+				<button ng-click="setCurrentRegion(region)">{{region.name}}</button>
+			</li>
+		</ul>
+
+		<div ng-if="isCurrentRegionNotNull()">
+			<button class="close" ng-click="setCurrentRegion(null)">x</button>
+			<strong><center>{{currentRegion.name}}</center></strong>
+		</div>
+		</div>
+
+		<!-- Province -->
+		<div ng-if="isCurrentRegionNotNull()">
+			<h2 class="sub-header">Province:</h2>
+			<ul>
+				<li ng-if="!isCurrentProvinceNotNull()"
+					ng-repeat="province in locHierarchies | filter:{parent:{uuid:currentRegion.uuid}}">
+					<button ng-click="setCurrentProvince(province)">{{province.name}}</button>
+				</li>
+			</ul>
+
+			<div ng-if="isCurrentProvinceNotNull()">
+				<button class="close" ng-click="setCurrentProvince(null)">x</button>
+				<strong><center>{{currentProvince.name}}</center></strong>
+			</div>
+		</div>
+
+		<!-- District -->
+		<div ng-if="isCurrentProvinceNotNull()">
+		<h2 class="sub-header">District:</h2>
+		<ul>
+			<li ng-if="!isCurrentDistrictNotNull()"
+				ng-repeat="district in locHierarchies | filter:{parent:{uuid:currentProvince.uuid}}">
+				<button ng-click="setCurrentDistrict(district)">{{district.name}}</button>
+			</li>
+		</ul>
+
+			<div ng-if="isCurrentDistrictNotNull()">
+				<button class="close" ng-click="setCurrentDistrict(null)">x</button>
+				<strong><center>{{currentDistrict.name}}</center></strong>
+			</div>
+		</div>
+
+		<!-- Subdistrict -->
+		<div ng-if="isCurrentDistrictNotNull()">
+		<h2 class="sub-header">Subdistrict :</h2>
+		<ul>
+			<li
+				ng-if="!isCurrentSubdistrictNotNull()"
+				ng-repeat="subdistrict in locHierarchies | filter:{parent:{uuid:currentDistrict.uuid}}">
+				<button ng-click="setCurrentSubdistrict(subdistrict)">{{subdistrict.name}}</button>
+			</li>
+		</ul>
+
+		<div ng-if="isCurrentSubdistrictNotNull()">
+				<button class="close" ng-click="setCurrentSubdistrict(null)">x</button>
+				<strong><center>{{currentSubdistrict.name}}</center></strong>
+		</div>
+		</div>
+
+		<!-- Locality -->
+		<div ng-if="isCurrentSubdistrictNotNull()">
+		<h2 class="sub-header">Locality:</h2>
+		<ul>
+			<li
+				ng-if="!isCurrentLocalityNotNull()"
+				ng-repeat="locality in locHierarchies | filter:{parent:{uuid:currentSubdistrict.uuid}}">
+				<button ng-click="setCurrentLocality(locality)">{{locality.name}}</button>
+			</li>
+		</ul>
+
+		<div ng-if="isCurrentLocalityNotNull()">
+			<button class="close" ng-click="setCurrentLocality(null)">x</button>
+			<strong><center>{{currentLocality.name}}</center></strong>
+		</div>
+		</div>
+
+
+		<!-- MapArea -->
+		<div ng-if="isCurrentLocalityNotNull()">
+		<h2 class="sub-header">Map Area:</h2>
+		<ul>
+			<li ng-if="isCurrentLocalityNotNull(); !isCurrentMapAreaNotNull()"
+				ng-repeat="mapArea in locHierarchies | filter:{parent:{uuid:currentLocality.uuid}}">
+				<button ng-click="setCurrentMapArea(mapArea)">{{mapArea.name}}</button>
+			</li>
+		</ul>
+
+		<div ng-if="isCurrentMapAreaNotNull()">
+			<button class="close" ng-click="setCurrentMapArea(null)">x</button>
+			<strong><center>{{currentMapArea.name}}</center></strong>
+		</div>
+		</div>
+
+
+		<!-- Sector -->
+		<div ng-if="isCurrentMapAreaNotNull()">
+			<h2 class="sub-header">Sector :</h2>
+			<ul>
+				<li
+					ng-repeat="sector in locHierarchies | filter:{parent:{uuid:currentMapArea.uuid}}">
+					<button ng-click="setCurrentSector(sector);setNewExtId(currentMapArea, sector)">{{sector.name}}</button>
+				</li>
+			</ul>
+		</div>
+
+
+	</div>
+
+
+
+</div>
+
+<div id="sidebar2">
+
+	<div ng-if="isCurrentSectorNotNull()">
+
+		<h2 class="h3 sub-header">
+			{{currentSector.name}}
+			<button class="close"
+				ng-click="setCurrentLocation(null);setCurrentSector(null)">x</button>
+		</h2>
+		<p></p>
+		<p></p>
+
+		<div>
+			Locations within Sector
+			<ul>
+				<li ng-repeat="loc in currentLocations">
+					<button ng-click="setCurrentLocation(loc)">{{loc.locationName}}</button>
+				</li>
+			</ul>
+		</div>
+		<div>
+			<button class="btn btn-primary action-item" data-toggle="modal" data-target="#createLocationModal" ng-click="setNewLocation()">
+				<span class="glyphicon glyphicon-plus-sign" aria-hidden="true" ></span> Add New Location
+			</button>
+		</div>
+
+	</div>
+
+</div>
+
+
+
+<div id="content">
+
+	<!-- Locations -->
+	<section id="locationInfo"
+		class="sections sections-no-padding sections-darker"
+		ng-if="isCurrentLocationNotNull()">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-9 col-border-right">
+					<div class="section-inner-padding">
+						<button class="btn btn-primary pull-right" data-toggle="modal"
+							data-target="#editLocationModal">
+							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							Edit Location
+						</button>
+						<h2 class="h3 sub-header">Location Information</h2>
+						<form class="form-inline form-inline-display">
+							<div class="form-group">
+								<p>Location Name</p>
+								<p class="h5" data-ng-bind="currentLocation.locationName"></p>
+							</div>
+							<div class="form-group">
+								<p>External ID</p>
+								<p class="h5" data-ng-bind="currentLocation.extId"></p>
+							</div>
+							<div class="form-group">
+								<p>Location Type</p>
+								<p class="h5" data-ng-bind="currentLocation.locationType"></p>
+							</div>
+							<div class="form-group">
+								<p>Location Hierarchy</p>
+								<p class="h5"
+									data-ng-bind="currentSector.extId"></p>
+							</div>
+							<div class="form-group">
+								<p>Latitude</p>
+								<p class="h5" data-ng-bind="currentLocation.latitude"></p>
+							</div>
+							<div class="form-group">
+								<p>Longitude</p>
+								<p class="h5" data-ng-bind="currentLocation.longitude"></p>
+							</div>
+							<div class="form-group">
+								<p>Building</p>
+								<p class="h5" data-ng-bind="currentLocation.buildingNumber"></p>
+							</div>
+							<div class="form-group">
+								<p>Floor</p>
+								<p class="h5" data-ng-bind="currentLocation.floorNumber"></p>
+							</div>
+
+						</form>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="section-inner-padding">
+						<h2 class="h3 sub-header">Location History</h2>
+						<!-- List group -->
+						<ul class="list-group">
+							<li class="list-group-item"><span
+								class="glyphicon glyphicon-retweet" aria-hidden="true"></span> <strong>Inserted
+									by:</strong>{{currentLocation.insertBy.uuid}}</li>
+							<li class="list-group-item"><span
+								class="glyphicon glyphicon-road" aria-hidden="true"></span> <strong>Collected
+									by:</strong>{{currentLocation.collectedBy.uuid}}</li>
+							<li class="list-group-item"><span
+								class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+								<strong>Insert Date:</strong>{{currentLocation.insertDate}}</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Residents -->
+	<section id="residents" class="sections sections-narrow"
+		ng-if="isCurrentLocationNotNull()">
+		<div class="container">
+			<div class="action-wrappers pull-right">
+				<button class="btn btn-primary pull-right action-item"
+					data-toggle="modal" data-target="#petModal"
+					data-ng-click="addPet()">
+					<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+					Add New Resident
+				</button>
+				<div class="pull-right action-item">
+					View as
+					<div class="btn-group">
+						<a class="btn btn-default"> <span
+							class="glyphicon glyphicon-th" aria-hidden="true"></span>
+						</a> <a class="btn btn-default"> <span
+							class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+						</a>
+					</div>
+				</div>
+			</div>
+			<h2 class="sub-header">Residents</h2>
+			<div
+				data-ng-repeat="resident in residencyData | filter:{location:{uuid:currentLocation.uuid}}"
+				class="col-md-3">
+
+				<div
+					ng-repeat="indiv in individualData | filter:{uuid:resident.individual.uuid}">
+
+
+					<div class="thumbnail">
+						<img
+							data-ng-src="{{ indiv.gender == 'M' && 'images/indiv.jpg' || 'images/woman.jpg'}}"
+							class="img-circle" alt="Generic placeholder image">
+						<div class="caption">
+							<h3 class="caption-heading"
+								data-ng-bind="indiv.firstName + ' ' + indiv.lastName">/h3>
+							<p class="caption-meta" data-ng-bind="indiv.gender"></p>
+							<p class="caption-meta" data-ng-bind="indiv.age"></p>
+							<p class="caption-meta" data-ng-bind="indiv.languagePreference"></p>
+							<p class="caption-meta">
+								<span class="caption-label" data-ng-bind="indiv.memberStatus"></span>
+							</p>
+
+						</div>
+						<div class="action-bar">
+							<button class="btn btn-default" data-toggle="modal"
+								data-target="#editIndividualModal"
+								data-ng-click="setCurrentIndividual(indiv)">
+								<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+								Edit Individual
+							</button>
+							<button class="btn btn-default" data-toggle="modal"
+								data-target="#addPetVisitModal">
+								<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+								Add Visit
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</section>
+
+
+</div>
+<!-- Add Owner modal -->
+<data-ng-include src="'components/locations/editLocation.html'"></data-ng-include>
+<data-ng-include src="'components/locations/createLocation.html'"></data-ng-include>
+<data-ng-include src="'components/individuals/editIndividual.html'"></data-ng-include>

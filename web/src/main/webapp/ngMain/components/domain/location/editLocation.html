@@ -1,0 +1,62 @@
+
+<!-- Edit Owner Modal -->
+<div class="modal modal-owner fade" id="editLocationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <h1 class="sub-header">Edit Location</h1>
+                            <em class="text-muted">Basic location details</em>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" data-ng-controller="EditLocationController">
+                <div class="container" >
+                    {{currLocation}}
+                    <div class="row">
+                        <div class="col-md-4 col-md-offset-2">
+                            <div class="form-group">
+                                <label for="LocationName">Location Name</label>
+                                <input type="text" class="form-control" id="LocationName" ng-model="currentLocation.locationName">
+                            </div>
+                            <div class="form-group">
+                                <label for="locationType">Location Type</label>
+                                <input type="text" class="form-control" id="locationType" value="{{currentLocation.locationType}}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <input type="text" class="form-control" id="status" value="{{currentLocation.status}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="birthDate">External ID</label>
+                                <input type="text" class="form-control" id="birthDate" value="{{currentLocation.extId}}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="locHierarchy">Hierarchy</label>
+                                <input type="text" class="form-control" id="locHierarchy" value="{{currentLocation.locationHierarchy.uuid}}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="collectedBy">Collected by</label>
+                                <input type="text" class="form-control" id="collectedBy" value="{{currentLocation.collectedBy.uuid}}" readonly>
+                            </div>
+
+
+                            <div class="col-md-8 col-md-offset-2">
+                            <div class="form-group form-group-action">
+                                <button class="btn btn-primary" data-toggle="modal" data-dismiss="modal" aria-label="Close" ng-click="saveLocation()">Update Location</button>
+                                <button class="btn btn-link" class="close" data-dismiss="modal" aria-label="Close">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

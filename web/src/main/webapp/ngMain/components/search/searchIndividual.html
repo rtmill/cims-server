@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+
+
+<div id="sidebar">
+<div>
+    <div id="nav-menu" class="navbar-collapse navbar-left collapse">
+        <ul class="nav navbar-nav navbar-menu">
+            <li data-ng-class="$state.is('search') ? 'active' : ''">
+                <a data-ui-sref="search">
+                    <span class="glyphicon glyphicon-arrow-left"></span>
+                    Back to Search
+                </a>
+            </li>
+        </ul>
+    </div><!-- /.navbar-collapse -->
+</div>
+
+
+    <h1> Individual </h1>
+
+    <p></p>
+
+    <div>
+        <form name="searchLocationForm">
+        <label for="searchBy"> Search by: </label>
+        <select name="searchBy" id="searchBy" ng-model="searchOption.searchByValue">
+            <option ng-repeat="option in searchOption.options" value="{{option.name}}">
+                {{option.name}}
+            </option>
+
+        </select>
+        </form>
+    </div>
+
+    <div>
+        Selected option : {{searchOption.searchByValue}}
+    </div>
+
+
+
+    <label>All: <p><input ng-model="search.$"></label> <br></p>
+    <label>First: <p></p><input ng-model="search.firstName"></label><br>
+    <label>Last: <p></p><input ng-model="search.lastName"></label><br>
+
+
+</div>
+
+<div id="sidebar2">
+        <table>
+            <tr>
+                <th>First</th>
+                <th>Last</th>
+                <th></th>
+            </tr>
+
+            <tr ng-repeat="indiv in individualData | filter:search">
+                <td>{{indiv.firstName}}</td>
+                <td>{{indiv.lastName}}</td>
+                <td><button>EDIT</button></td>
+            </tr>
+        </table>
+
+
+</div>
+
+</body>
+</html>
